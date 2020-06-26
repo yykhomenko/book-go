@@ -1,14 +1,23 @@
 package main
 
 import (
+	"flag"
 	"io"
 	"log"
 	"net"
 	"time"
 )
 
+var (
+	port string
+)
+
+func init() {
+	flag.StringVar(&port, "port", "8080", "server port")
+}
+
 func main() {
-	listener, err := net.Listen("tcp", ":8080")
+	listener, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		log.Fatal(err)
 	}
