@@ -20,7 +20,6 @@ func main() {
 		name, addr := kv[0], kv[1]
 		clock(name, addr)
 	}
-
 }
 
 func clock(name, addr string) {
