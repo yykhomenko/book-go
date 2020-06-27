@@ -14,6 +14,7 @@ var (
 
 func init() {
 	flag.StringVar(&port, "port", "8080", "server port")
+	flag.Parse()
 }
 
 func main() {
