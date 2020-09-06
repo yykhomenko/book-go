@@ -24,13 +24,13 @@ func main() {
 		fmt.Fprintf(os.Stderr, "create file: %v/n", err)
 		os.Exit(1)
 	}
+	defer f.Close()
 
 	for range os.Args[1:] {
 		fmt.Fprintln(f, <-ch)
 	}
 
 	fmt.Fprintf(f, "%.2fs elapsed\n", time.Since(start).Seconds())
-	f.Close()
 }
 
 func fetch(url string, ch chan<- string) {
