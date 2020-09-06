@@ -1,5 +1,5 @@
 // Lissajous generate animation GIF file from random Lissajous figure.
-// go build lissajous.go && ./lissajous > example.gif
+// go run lissajous.go > example.gif
 package main
 
 import (

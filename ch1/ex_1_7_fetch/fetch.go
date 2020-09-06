@@ -1,5 +1,5 @@
 // Fetch makes HTTP GET queries, one by url.
-// go build fetch.go && ./fetch https://google.com https://golang.org
+// go run fetch.go https://google.com https://golang.org
 package main
 
 import (
