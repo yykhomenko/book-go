@@ -19,7 +19,7 @@ const (
 )
 
 func main() {
-	lissajous(os.Stdin)
+	lissajous(os.Stdout)
 }
 
 func lissajous(out io.Writer) {
