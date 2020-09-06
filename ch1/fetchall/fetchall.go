@@ -38,7 +38,7 @@ func fetch(url string, ch chan<- string) {
 	nbytes, err := io.Copy(ioutil.Discard, resp.Body)
 	resp.Body.Close()
 	if err != nil {
-		ch <- fmt.Sprintf("while reding %s: %v", url, err)
+		ch <- fmt.Sprintf("while reading %s: %v", url, err)
 	}
 
 	secs := time.Since(start).Seconds()
