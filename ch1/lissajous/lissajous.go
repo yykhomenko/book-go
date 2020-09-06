@@ -25,11 +25,11 @@ func main() {
 
 func lissajous(out io.Writer) {
 	const (
-		cycles  = 5
-		res     = 0.001
-		size    = 100
-		nFrames = 64
-		delay   = 8
+		cycles  = 5     // Number of total oscillation x
+		res     = 0.001 // Angle's resolution
+		size    = 100   // Size of canvas
+		nFrames = 64    // Number of GIF frames
+		delay   = 8     // Delay between frames (1 is 10ms)
 	)
 
 	rand.Seed(time.Now().UTC().UnixNano())
