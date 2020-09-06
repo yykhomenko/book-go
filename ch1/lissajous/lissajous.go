@@ -1,3 +1,4 @@
+// Lissajous generate animation GIF file from random Lissajous figure.
 package main
 
 import (
