@@ -19,18 +19,18 @@ func main() {
 		go fetch(url, ch)
 	}
 
-	f, err := os.Create("dump.txt")
+	file, err := os.Create("dump.txt")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "create file: %v/n", err)
 		os.Exit(1)
 	}
-	defer f.Close()
+	defer file.Close()
 
 	for range os.Args[1:] {
-		fmt.Fprintln(f, <-ch)
+		fmt.Fprintln(file, <-ch)
 	}
 
-	fmt.Fprintf(f, "%.2fs elapsed\n", time.Since(start).Seconds())
+	fmt.Fprintf(file, "%.2fs elapsed\n", time.Since(start).Seconds())
 }
 
 func fetch(url string, ch chan<- string) {
