@@ -1,7 +1,7 @@
 // Server3 is HTTP server that shows request details.
 // go run server3.go
 // http :8000
-// http :8000/count
+// http :8000/search?q=golang
 package main
 
 import (
