@@ -21,7 +21,7 @@ func main() {
 
 	file, err := os.Create("dump.txt")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "create file: %v/n", err)
+		fmt.Fprintf(os.Stderr, "create file: %v\n", err)
 		os.Exit(1)
 	}
 	defer file.Close()
