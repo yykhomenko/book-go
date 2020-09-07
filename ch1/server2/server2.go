@@ -11,8 +11,10 @@ import (
 	"sync"
 )
 
-var mu sync.Mutex
-var count int
+var (
+	mu    sync.Mutex
+	count int
+)
 
 func main() {
 	http.HandleFunc("/", handler)
