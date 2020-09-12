@@ -1,3 +1,4 @@
+// Boiling shows temperature of water boiling in ˚F and ˚C.
 package main
 
 import (
