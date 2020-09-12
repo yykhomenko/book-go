@@ -1,6 +1,6 @@
 // Lissajous generate animation GIF file from random Lissajous figure.
-// go run lissajous.go > example.gif
-package main
+// go run Lissajous.go > example.gif
+package lissajous
 
 import (
 	"image"
@@ -9,7 +9,6 @@ import (
 	"io"
 	"math"
 	"math/rand"
-	"os"
 	"time"
 )
 
@@ -24,11 +23,7 @@ var palette = []color.Color{
 	color.White,
 }
 
-func main() {
-	lissajous(os.Stdout)
-}
-
-func lissajous(out io.Writer) {
+func Lissajous(out io.Writer) {
 	const (
 		cycles  = 5     // Number of total oscillation x
 		res     = 0.001 // Angle's resolution
