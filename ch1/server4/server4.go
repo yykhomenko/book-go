@@ -1,6 +1,6 @@
 // Server4 is HTTP server that shows Lissajous figures.
 // go run server4.go
-// http :8000
+// http://localhost:8000
 package main
 
 import (
