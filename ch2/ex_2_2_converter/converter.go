@@ -57,6 +57,7 @@ func KilogramToPound(k Kilogram) Pound {
 
 func main() {
 	var args []string
+
 	if len(os.Args) == 1 {
 		s, err := bufio.NewReader(os.Stdin).ReadString('\n')
 		if err != nil {
