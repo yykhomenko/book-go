@@ -65,7 +65,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		text := strings.Replace(s, "\n", "", -1)
+		text := strings.TrimSuffix(s, "\n")
 		args = strings.Split(text, " ")
 	} else {
 		args = os.Args[1:]
