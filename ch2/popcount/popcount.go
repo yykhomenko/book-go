@@ -1,4 +1,4 @@
-package main
+package popcount
 
 // pc[i] - number of single bits in i.
 var pc [256]byte
