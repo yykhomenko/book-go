@@ -11,7 +11,6 @@ import (
 )
 
 func TestPopCount(t *testing.T) {
-	assert.Equal(t, 4, popcount.PopCount(15))
 	assert.Equal(t, 4, PopCount(15))
 }
 
