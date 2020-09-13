@@ -1,4 +1,5 @@
-// go test -bench .
+// go test
+// go test -bench . -benchmem
 package ex_2_3_popcount
 
 import (
