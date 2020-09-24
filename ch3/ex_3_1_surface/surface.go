@@ -38,7 +38,7 @@ func main() {
 			}
 
 			fmt.Fprintf(os.Stdout,
-				"<polygon points='%g,%g %g,%g %g,%g %g,%g'/>",
+				"<polygon points='%g,%g %g,%g %g,%g %g,%g'/>\n",
 				ax, ay, bx, by, cx, cy, dx, dy)
 		}
 	}
