@@ -20,7 +20,7 @@ const (
 
 var sin30, cos30 = math.Sin(angle), math.Cos(angle)
 
-type poligon struct {
+type polygon struct {
 	ax, ay, bx, by, cx, cy, dx, dy, z float64
 }
 
@@ -48,8 +48,8 @@ func printSVG(w io.Writer) {
 	fmt.Fprintln(os.Stdout, "</svg>")
 }
 
-func polygons() []poligon {
-	var p []poligon
+func polygons() []polygon {
+	var p []polygon
 
 	for i := 0; i < cells; i++ {
 		for j := 0; j < cells; j++ {
@@ -62,14 +62,14 @@ func polygons() []poligon {
 				continue
 			}
 
-			p = append(p, poligon{ax, ay, bx, by, cx, cy, dx, dy, avg(za, zb, zc, zd)})
+			p = append(p, polygon{ax, ay, bx, by, cx, cy, dx, dy, avg(za, zb, zc, zd)})
 		}
 	}
 
 	return p
 }
 
-func minmaxz(ps *[]poligon) (float64, float64) {
+func minmaxz(ps *[]polygon) (float64, float64) {
 	var min, max = math.MaxFloat64, math.SmallestNonzeroFloat64
 
 	for _, p := range *ps {
