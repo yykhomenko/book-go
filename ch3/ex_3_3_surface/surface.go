@@ -35,10 +35,10 @@ func printSVG(w io.Writer) {
 			"width='%d' height='%d'>",
 		width, height)
 
-	plgs := poligons()
-	min, max := minmaxz(&plgs)
+	ps := polygons()
+	min, max := minmaxz(&ps)
 
-	for _, p := range plgs {
+	for _, p := range ps {
 		fmt.Fprintf(w,
 			"<polygon "+
 				"style='fill: #%06x' points='%g,%g %g,%g %g,%g %g,%g'/>\n",
@@ -48,7 +48,7 @@ func printSVG(w io.Writer) {
 	fmt.Fprintln(os.Stdout, "</svg>")
 }
 
-func poligons() []poligon {
+func polygons() []poligon {
 	var p []poligon
 
 	for i := 0; i < cells; i++ {
@@ -69,15 +69,15 @@ func poligons() []poligon {
 	return p
 }
 
-func minmaxz(poligons *[]poligon) (float64, float64) {
+func minmaxz(ps *[]poligon) (float64, float64) {
 	var min, max = math.MaxFloat64, math.SmallestNonzeroFloat64
 
-	for _, poligon := range *poligons {
-		if min > poligon.z {
-			min = poligon.z
+	for _, p := range *ps {
+		if min > p.z {
+			min = p.z
 		}
-		if max < poligon.z {
-			max = poligon.z
+		if max < p.z {
+			max = p.z
 		}
 	}
 
