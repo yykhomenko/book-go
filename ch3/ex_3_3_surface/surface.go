@@ -32,7 +32,7 @@ func printSVG(w io.Writer) {
 	fmt.Fprintf(w,
 		"<svg xmlns='http://www.w3.org/2000/svg' "+
 			"style='stroke: black; fill: white; stroke-width: 0.7' "+
-			"width='%d' height='%d'>",
+			"width='%d' height='%d'>\n",
 		width, height)
 
 	ps := polygons()
