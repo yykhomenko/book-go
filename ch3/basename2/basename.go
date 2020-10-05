@@ -1,7 +1,7 @@
 // "a/b/c.go" => "c"
 // "c.d.go" => "c.d"
 // "abc" => "abc"
-package basename1
+package basename2
 
 import "strings"
 
