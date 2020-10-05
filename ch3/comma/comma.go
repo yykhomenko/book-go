@@ -1,6 +1,4 @@
-// "a/b/c.go" => "c"
-// "c.d.go" => "c.d"
-// "abc" => "abc"
+// "12345" => "12,345"
 package comma
 
 func comma(s string) string {
