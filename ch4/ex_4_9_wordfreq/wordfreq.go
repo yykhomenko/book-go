@@ -1,3 +1,4 @@
+// Wordfreq counts the occurences of words.
 // cat wordfreq.go | go run wordfreq.go
 package main
 
