@@ -16,8 +16,13 @@ func main() {
 		counts[in.Text()]++
 	}
 
+	if in.Err() != nil {
+		fmt.Fprintf(os.Stderr, "wordfreq: %v\n", in.Err())
+		os.Exit(1)
+	}
+
 	fmt.Fprint(os.Stdout, "word\tfreq\n")
 	for w, n := range counts {
-		fmt.Fprintf(os.Stdout, "%q\t%d\n", w, n)
+		fmt.Fprintf(os.Stdout, "%-30q\t%d\n", w, n)
 	}
 }
