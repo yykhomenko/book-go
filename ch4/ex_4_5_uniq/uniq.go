@@ -1,3 +1,4 @@
+// Uniq dedupes a slice of strings.
 package ex_4_5_uniq
 
 func uniq(strs []string) []string {
