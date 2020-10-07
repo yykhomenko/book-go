@@ -1,3 +1,4 @@
+// Charcount computes counts of Unicode characters.
 // cat charcount.go | go run charcount.go
 package main
 
