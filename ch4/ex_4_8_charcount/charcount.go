@@ -95,7 +95,7 @@ func main() {
 
 	fmt.Print("category\tcount\n")
 	for c, n := range categories {
-		fmt.Printf("%q\t%d\n", c, n)
+		fmt.Printf("%-30q\t%d\n", c, n)
 	}
 
 	if invalid > 0 {
