@@ -19,8 +19,10 @@ func main() {
 
 	fmt.Println("up to a month:")
 	printBetween(result, time.Now().AddDate(0, -1, 0), time.Now())
+
 	fmt.Println("less then a year:")
 	printBetween(result, time.Now().AddDate(-1, 0, 0), time.Now().AddDate(0, -1, 0))
+
 	fmt.Println("over a year:")
 	printBetween(result, time.Time{}, time.Now().AddDate(-1, 0, 0))
 }
