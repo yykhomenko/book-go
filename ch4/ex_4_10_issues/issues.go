@@ -30,7 +30,7 @@ func main() {
 func printBetween(issues *github.IssuesSearchResult, a, b time.Time) {
 	for _, item := range issues.Items {
 		if item.CreatedAt.After(a) && item.CreatedAt.Before(b) {
-			fmt.Printf("#%-5d %9.9s %.55s %v\n", item.Number, item.User.Login, item.Title, item.CreatedAt)
+			fmt.Printf("#%-5d %9.9s %.55s\n", item.Number, item.User.Login, item.Title)
 		}
 	}
 }
