@@ -1,4 +1,4 @@
-package main
+package github
 
 import (
 	"encoding/json"
@@ -13,7 +13,7 @@ const IssuesURL = "https://api.github.com/search/issues"
 
 type IssuesSearchResult struct {
 	TotalCount int `json:"total_count"`
-	Items      *[]Issue
+	Items      []*Issue
 }
 
 type Issue struct {
@@ -45,7 +45,7 @@ func SearchIssues(terms []string) (*IssuesSearchResult, error) {
 	}
 
 	var result IssuesSearchResult
-	if err := json.NewDecoder(resp.Body).Decode(&resp); err != nil {
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		resp.Body.Close()
 		return nil, err
 	}
