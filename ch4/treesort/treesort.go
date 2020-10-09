@@ -1,3 +1,4 @@
+// Treesort sorts int slice by tree.
 package main
 
 type tree struct {
