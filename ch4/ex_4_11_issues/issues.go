@@ -23,8 +23,19 @@ func createIssue(owner string, repo string, number string) {
 
 }
 
-func readIssue(owner string, repo string, number string) {
+func getIssue(owner string, repo string, number string) {
+	issue, err := github.GetIssue(owner, repo, number)
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	body := issue.Body
+	if body == "" {
+		body = "<empty>\n"
+	}
+
+	fmt.Printf("repo: %s/%s\nnumber: %s\nuser: %s\ntitle: %s\n\n%s\n",
+		owner, repo, number, issue.User.Login, issue.Title, body)
 }
 
 func updateIssue(owner string, repo string, number string) {

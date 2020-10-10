@@ -1,5 +1,5 @@
-// go run main.go search github golang
-// go run main.go edit OWNER REPO NUMBER
+// go build -o issues && ./issues search golang
+// go build -o issues && ./issues edit OWNER REPO NUMBER
 package main
 
 import (
@@ -27,8 +27,8 @@ func main() {
 		switch cmd {
 		case "create":
 			createIssue(owner, repo, number)
-		case "read":
-			readIssue(owner, repo, number)
+		case "get":
+			getIssue(owner, repo, number)
 		case "update":
 			updateIssue(owner, repo, number)
 		case "close":

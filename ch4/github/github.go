@@ -34,7 +34,6 @@ type User struct {
 
 func SearchIssues(terms []string) (*IssuesSearchResult, error) {
 	q := url.QueryEscape(strings.Join(terms, " "))
-
 	resp, err := http.Get(IssuesURL + "?q=" + q)
 	if err != nil {
 		return nil, err
@@ -59,8 +58,24 @@ func CreateIssue(owner string, repo string, number string) {
 
 }
 
-func ReadIssue(owner string, repo string, number string) {
+func GetIssue(owner string, repo string, number string) (*Issue, error) {
+	q := strings.Join([]string{APIURL, "repos", owner, repo, "issues", number}, "/")
+	resp, err := http.Get(q)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("get error: %s", resp.Status)
+	}
+
+	var issue Issue
+	if err := json.NewDecoder(resp.Body).Decode(&issue); err != nil {
+		return nil, err
+	}
+
+	return &issue, nil
 }
 
 func UpdateIssue(owner string, repo string, number string) {
