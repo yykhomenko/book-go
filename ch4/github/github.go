@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"time"
 )
@@ -83,5 +84,26 @@ func UpdateIssue(owner string, repo string, number string, fields map[string]str
 
 	client := http.Client{}
 	url := strings.Join([]string{APIURL, "repos", owner, repo, "issues", number}, "/")
-	req := http.NewRequest("PATCH", url)
+	req, err := http.NewRequest("PATCH", url, body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.SetBasicAuth(os.Getenv("GITHUB_USER"), os.Getenv("GITHUB_PASS"))
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unable to update issue: %s\n", resp.StatusCode)
+	}
+
+	var issue *Issue
+	if err := json.NewDecoder(resp.Body).Decode(issue); err != nil {
+		return nil, err
+	}
+
+	return issue, nil
 }
