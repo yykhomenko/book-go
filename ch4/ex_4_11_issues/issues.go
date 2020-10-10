@@ -24,7 +24,7 @@ func createIssue(owner, repo, title string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("#%d\n", issue.Number)
+	fmt.Printf("created #%d\n", issue.Number)
 }
 
 func getIssue(owner, repo, number string) {
@@ -43,9 +43,30 @@ func getIssue(owner, repo, number string) {
 }
 
 func updateIssue(owner, repo, number string) {
+	issue, err := github.GetIssue(owner, repo, number)
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	// issue to file
+	// edit file via editor
+	// file to issue
+
+	fields := map[string]string{
+		"title": issue.Title,
+		"state": issue.State,
+		"body":  issue.Body,
+	}
+
+	if err := github.UpdateIssue(owner, repo, number, fields); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("updated")
 }
 
 func closeIssue(owner, repo, number string) {
-
+	if err := github.CloseIssue(owner, repo, number); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("closed")
 }
