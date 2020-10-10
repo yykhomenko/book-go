@@ -1,6 +1,7 @@
 package github
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -54,13 +55,9 @@ func SearchIssues(terms []string) (*IssuesSearchResult, error) {
 	return &result, nil
 }
 
-func CreateIssue(owner string, repo string, number string) {
-
-}
-
 func GetIssue(owner string, repo string, number string) (*Issue, error) {
-	q := strings.Join([]string{APIURL, "repos", owner, repo, "issues", number}, "/")
-	resp, err := http.Get(q)
+	url := strings.Join([]string{APIURL, "repos", owner, repo, "issues", number}, "/")
+	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
@@ -78,10 +75,13 @@ func GetIssue(owner string, repo string, number string) (*Issue, error) {
 	return &issue, nil
 }
 
-func UpdateIssue(owner string, repo string, number string) {
+func UpdateIssue(owner string, repo string, number string, fields map[string]string) (*Issue, error) {
+	body := &bytes.Buffer{}
+	if err := json.NewEncoder(body).Encode(fields); err != nil {
+		return nil, err
+	}
 
-}
-
-func CloseIssue(owner string, repo string, number string) {
-
+	client := http.Client{}
+	url := strings.Join([]string{APIURL, "repos", owner, repo, "issues", number}, "/")
+	req := http.NewRequest("PATCH", url)
 }
