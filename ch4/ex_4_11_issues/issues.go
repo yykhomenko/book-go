@@ -19,11 +19,15 @@ func searchIssues(args []string) {
 	}
 }
 
-func createIssue(owner string, repo string, number string) {
-
+func createIssue(owner, repo, title string) {
+	issue, err := github.CreateIssue(owner, repo, title)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("#%d\n", issue.Number)
 }
 
-func getIssue(owner string, repo string, number string) {
+func getIssue(owner, repo, number string) {
 	issue, err := github.GetIssue(owner, repo, number)
 	if err != nil {
 		log.Fatal(err)
@@ -38,10 +42,10 @@ func getIssue(owner string, repo string, number string) {
 		owner, repo, number, issue.User.Login, issue.Title, body)
 }
 
-func updateIssue(owner string, repo string, number string) {
+func updateIssue(owner, repo, number string) {
 
 }
 
-func closeIssue(owner string, repo string, number string) {
+func closeIssue(owner, repo, number string) {
 
 }

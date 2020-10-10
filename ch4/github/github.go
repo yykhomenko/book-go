@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -56,7 +57,7 @@ func SearchIssues(terms []string) (*IssuesSearchResult, error) {
 	return &result, nil
 }
 
-func GetIssue(owner string, repo string, number string) (*Issue, error) {
+func GetIssue(owner, repo, number string) (*Issue, error) {
 	url := strings.Join([]string{APIURL, "repos", owner, repo, "issues", number}, "/")
 	resp, err := http.Get(url)
 	if err != nil {
@@ -76,34 +77,71 @@ func GetIssue(owner string, repo string, number string) (*Issue, error) {
 	return &issue, nil
 }
 
-func UpdateIssue(owner string, repo string, number string, fields map[string]string) (*Issue, error) {
-	body := &bytes.Buffer{}
-	if err := json.NewEncoder(body).Encode(fields); err != nil {
+func CreateIssue(owner, repo, title string) (*Issue, error) {
+	body, err := json.Marshal(map[string]string{"title": title})
+	if err != nil {
 		return nil, err
 	}
 
 	client := http.Client{}
-	url := strings.Join([]string{APIURL, "repos", owner, repo, "issues", number}, "/")
-	req, err := http.NewRequest("PATCH", url, body)
+	url := strings.Join([]string{APIURL, "repos", owner, repo, "issues"}, "/")
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
 	if err != nil {
 		return nil, err
 	}
 
 	req.SetBasicAuth(os.Getenv("GITHUB_USER"), os.Getenv("GITHUB_PASS"))
+	req.Header.Set("Accept", "application/vnd.github.v3+json")
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unable to update issue: %s\n", resp.StatusCode)
+	if resp.StatusCode != http.StatusCreated {
+		return nil, fmt.Errorf("unable to create issue: %s\n", resp.Status)
 	}
 
-	var issue *Issue
-	if err := json.NewDecoder(resp.Body).Decode(issue); err != nil {
+	var issue Issue
+	l := resp.Header.Get("Location")
+	i := strings.LastIndex(l, "/")
+	n, err := strconv.Atoi(l[i+1:])
+	if err != nil {
 		return nil, err
 	}
+	issue.Number = n
 
-	return issue, nil
+	return &issue, nil
 }
+
+// func UpdateIssue(owner, repo, number string, fields map[string]string) (*Issue, error) {
+// 	body := &bytes.Buffer{}
+// 	if err := json.NewEncoder(body).Encode(fields); err != nil {
+// 		return nil, err
+// 	}
+//
+// 	client := http.Client{}
+// 	url := strings.Join([]string{APIURL, "repos", owner, repo, "issues"}, "/")
+// 	req, err := http.NewRequest("PATCH", url, body)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+//
+// 	req.SetBasicAuth(os.Getenv("GITHUB_USER"), os.Getenv("GITHUB_PASS"))
+// 	resp, err := client.Do(req)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	defer resp.Body.Close()
+//
+// 	if resp.StatusCode != http.StatusOK {
+// 		return nil, fmt.Errorf("unable to update issue: %s\n", resp.Status)
+// 	}
+//
+// 	var issue *Issue
+// 	if err := json.NewDecoder(resp.Body).Decode(issue); err != nil {
+// 		return nil, err
+// 	}
+//
+// 	return issue, nil
+// }

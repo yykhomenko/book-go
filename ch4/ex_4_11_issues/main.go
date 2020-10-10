@@ -1,5 +1,6 @@
 // go build -o issues && ./issues search golang
 // go build -o issues && ./issues edit OWNER REPO NUMBER
+// go build -o issues && export GITHUB_USER=USER && export GITHUB_PASS=PASS && ./issues create yykhomenko test
 package main
 
 import (
@@ -20,19 +21,15 @@ func main() {
 	if cmd == "search" {
 		searchIssues(args)
 	} else {
-		if len(os.Args) != 5 {
-			usageDie()
-		}
-		owner, repo, number := args[0], args[1], args[2]
 		switch cmd {
 		case "create":
-			createIssue(owner, repo, number)
+			createIssue(args[0], args[1], args[2])
 		case "get":
-			getIssue(owner, repo, number)
+			getIssue(args[0], args[1], args[2])
 		case "update":
-			updateIssue(owner, repo, number)
+			updateIssue(args[0], args[1], args[2])
 		case "close":
-			closeIssue(owner, repo, number)
+			closeIssue(args[0], args[1], args[2])
 		default:
 			fmt.Fprintf(os.Stderr, "unknown command: %q, use: %s\n", cmd, usage)
 		}
