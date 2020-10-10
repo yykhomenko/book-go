@@ -77,6 +77,26 @@ func GetIssue(owner, repo, number string) (*Issue, error) {
 	return &issue, nil
 }
 
+func GetIssues(owner, repo string) ([]*Issue, error) {
+	url := strings.Join([]string{APIURL, "repos", owner, repo, "issues"}, "/")
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("get error: %s", resp.Status)
+	}
+
+	var issue []*Issue
+	if err := json.NewDecoder(resp.Body).Decode(&issue); err != nil {
+		return nil, err
+	}
+
+	return issue, nil
+}
+
 func CreateIssue(owner, repo, title string) (*Issue, error) {
 	fields := map[string]string{"title": title}
 	body := &bytes.Buffer{}
@@ -136,6 +156,7 @@ func patchIssue(owner, repo, number string, fields map[string]string) error {
 		return err
 	}
 
+	req.Header.Set("Accept", "application/vnd.github.v3+json")
 	req.SetBasicAuth(os.Getenv("GITHUB_USER"), os.Getenv("GITHUB_PASS"))
 	resp, err := client.Do(req)
 	if err != nil {

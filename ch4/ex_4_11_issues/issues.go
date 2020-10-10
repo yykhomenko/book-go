@@ -1,8 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"os"
+	"os/exec"
 
 	"github.com/yykhomenko/book-gopl/ch4/github"
 )
@@ -38,8 +42,25 @@ func getIssue(owner, repo, number string) {
 		body = "<empty>\n"
 	}
 
-	fmt.Printf("repo: %s/%s\nnumber: %s\nuser: %s\ntitle: %s\n\n%s\n",
+	fmt.Printf("repo: %s/%s\nnumber: %s\nuser: %s\ntitle: %s\ncomment: %s\n",
 		owner, repo, number, issue.User.Login, issue.Title, body)
+}
+
+func getIssues(owner, repo string) {
+	issues, err := github.GetIssues(owner, repo)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, issue := range issues {
+		body := issue.Body
+		if body == "" {
+			body = "<empty>\n"
+		}
+
+		fmt.Printf("repo: %s/%s\nnumber: %d\nuser: %s\ntitle: %s\ncomment: %s\n",
+			owner, repo, issue.Number, issue.User.Login, issue.Title, body)
+	}
 }
 
 func updateIssue(owner, repo, number string) {
@@ -48,14 +69,60 @@ func updateIssue(owner, repo, number string) {
 		log.Fatal(err)
 	}
 
-	// issue to file
-	// edit file via editor
-	// file to issue
-
 	fields := map[string]string{
 		"title": issue.Title,
 		"state": issue.State,
 		"body":  issue.Body,
+	}
+
+	content, err := json.MarshalIndent(fields, "", " ")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tmpfile, err := ioutil.TempFile("", "issues-*")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer tmpfile.Close()
+	defer os.Remove(tmpfile.Name())
+
+	if _, err := tmpfile.Write(content); err != nil {
+		log.Fatal(err)
+	}
+	tmpfile.Sync()
+
+	editor := os.Getenv("EDITOR")
+	if editor == "" {
+		editor = "nano"
+	}
+
+	editorPath, err := exec.LookPath(editor)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	cmd := &exec.Cmd{
+		Path:   editorPath,
+		Args:   []string{editor, tmpfile.Name()},
+		Stdin:  os.Stdin,
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+	}
+
+	if err := cmd.Run(); err != nil {
+		log.Fatal(err)
+	}
+
+	tmpfile.Seek(0, 0)
+	content, err = ioutil.ReadAll(tmpfile)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err := json.Unmarshal(content, &fields); err != nil {
+		log.Fatal(err)
 	}
 
 	if err := github.UpdateIssue(owner, repo, number, fields); err != nil {

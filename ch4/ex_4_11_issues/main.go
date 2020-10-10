@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-var usage = "usage: issues search|create|read|update|close TERM|(OWNER REPO NUMBER)]"
+var usage = "usage: issues search|list|create|read|update|close TERM|(OWNER REPO)|(OWNER REPO NUMBER)]"
 
 func main() {
 	if len(os.Args) < 3 {
@@ -22,6 +22,8 @@ func main() {
 		searchIssues(args)
 	} else {
 		switch cmd {
+		case "list":
+			getIssues(args[0], args[1])
 		case "create":
 			createIssue(args[0], args[1], args[2])
 		case "get":
