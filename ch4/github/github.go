@@ -78,14 +78,15 @@ func GetIssue(owner, repo, number string) (*Issue, error) {
 }
 
 func CreateIssue(owner, repo, title string) (*Issue, error) {
-	body, err := json.Marshal(map[string]string{"title": title})
-	if err != nil {
+	fields := map[string]string{"title": title}
+	body := &bytes.Buffer{}
+	if err := json.NewEncoder(body).Encode(fields); err != nil {
 		return nil, err
 	}
 
 	client := http.Client{}
 	url := strings.Join([]string{APIURL, "repos", owner, repo, "issues"}, "/")
-	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
+	req, err := http.NewRequest(http.MethodPost, url, body)
 	if err != nil {
 		return nil, err
 	}
@@ -114,34 +115,34 @@ func CreateIssue(owner, repo, title string) (*Issue, error) {
 	return &issue, nil
 }
 
-// func UpdateIssue(owner, repo, number string, fields map[string]string) (*Issue, error) {
-// 	body := &bytes.Buffer{}
-// 	if err := json.NewEncoder(body).Encode(fields); err != nil {
-// 		return nil, err
-// 	}
-//
-// 	client := http.Client{}
-// 	url := strings.Join([]string{APIURL, "repos", owner, repo, "issues"}, "/")
-// 	req, err := http.NewRequest("PATCH", url, body)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-//
-// 	req.SetBasicAuth(os.Getenv("GITHUB_USER"), os.Getenv("GITHUB_PASS"))
-// 	resp, err := client.Do(req)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	defer resp.Body.Close()
-//
-// 	if resp.StatusCode != http.StatusOK {
-// 		return nil, fmt.Errorf("unable to update issue: %s\n", resp.Status)
-// 	}
-//
-// 	var issue *Issue
-// 	if err := json.NewDecoder(resp.Body).Decode(issue); err != nil {
-// 		return nil, err
-// 	}
-//
-// 	return issue, nil
-// }
+func UpdateIssue(owner, repo, number string, fields map[string]string) (*Issue, error) {
+	body := &bytes.Buffer{}
+	if err := json.NewEncoder(body).Encode(fields); err != nil {
+		return nil, err
+	}
+
+	client := http.Client{}
+	url := strings.Join([]string{APIURL, "repos", owner, repo, "issues"}, "/")
+	req, err := http.NewRequest(http.MethodPatch, url, body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.SetBasicAuth(os.Getenv("GITHUB_USER"), os.Getenv("GITHUB_PASS"))
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unable to update issue: %s\n", resp.Status)
+	}
+
+	var issue *Issue
+	if err := json.NewDecoder(resp.Body).Decode(issue); err != nil {
+		return nil, err
+	}
+
+	return issue, nil
+}
