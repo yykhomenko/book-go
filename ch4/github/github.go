@@ -10,6 +10,7 @@ import (
 )
 
 const IssuesURL = "https://api.github.com/search/issues"
+const APIURL = "https://api.github.com"
 
 type IssuesSearchResult struct {
 	TotalCount int `json:"total_count"`
@@ -52,4 +53,20 @@ func SearchIssues(terms []string) (*IssuesSearchResult, error) {
 
 	resp.Body.Close()
 	return &result, nil
+}
+
+func CreateIssue(owner string, repo string, number string) {
+
+}
+
+func ReadIssue(owner string, repo string, number string) {
+
+}
+
+func UpdateIssue(owner string, repo string, number string) {
+
+}
+
+func CloseIssue(owner string, repo string, number string) {
+
 }

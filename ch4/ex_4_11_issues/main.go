@@ -1,5 +1,5 @@
-// go run issues.go search github golang
-// go run issues.go edit OWNER REPO NUMBER
+// go run main.go search github golang
+// go run main.go edit OWNER REPO NUMBER
 package main
 
 import (
@@ -18,7 +18,7 @@ func main() {
 	args := os.Args[2:]
 
 	if cmd == "search" {
-		searchIssue(args)
+		searchIssues(args)
 	} else {
 		if len(os.Args) != 5 {
 			usageDie()
