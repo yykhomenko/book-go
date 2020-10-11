@@ -20,7 +20,7 @@ type Movie struct {
 	Poster string
 }
 
-func (m Movie) Filename() string {
+func (m *Movie) Filename() string {
 	i := strings.LastIndex(m.Poster, ".")
 	return fmt.Sprintf("%s_(%s)%s", m.Title, m.Year, m.Poster[i:])
 }
