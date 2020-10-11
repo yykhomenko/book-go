@@ -66,6 +66,7 @@ func comicsCount() int {
 	if err := json.NewDecoder(resp.Body).Decode(comics); err != nil {
 		log.Fatal(err)
 	}
+
 	return comics.Num
 }
 
@@ -115,5 +116,6 @@ func GetComics(n int) (*Comics, error) {
 	if err := json.NewDecoder(resp.Body).Decode(comics); err != nil {
 		return nil, err
 	}
+
 	return comics, nil
 }
