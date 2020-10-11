@@ -1,7 +1,7 @@
-// go build xkcd.go && ./xkcd init
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -10,9 +10,11 @@ import (
 	"strings"
 )
 
-const UrlFormat = "https://xkcd.com/%d/info.0.json"
-
-var usage = `xkcd init|search [(arg1 arg2 ...)]`
+const (
+	Usage     = `xkcd init|search [(arg1 arg2 ...)]`
+	UrlCount  = "https://xkcd.com/info.0.json"
+	UrlFormat = "https://xkcd.com/%d/info.0.json"
+)
 
 type Comics struct {
 	Num        int
@@ -20,41 +22,55 @@ type Comics struct {
 	Transcript string
 }
 
-func main() {
-	if len(os.Args) < 2 {
-		log.Fatal(usage)
-	}
-	cmd := os.Args[1]
-	args := os.Args[2:]
+func InitDB() {
+	comicsCount := comicsCount()
 
-	switch {
-	case cmd == "init":
-		initDB()
-	case cmd == "search":
-		search(args)
+	var result []Comics
+	for i := 1; i <= comicsCount; i++ {
+		cs, err := GetComics(i)
+		if err != nil {
+			log.Printf("%v\n", err)
+			continue
+		}
+		result = append(result, *cs)
+		fmt.Printf("\r%3.2f%% (%d of %d)... ",
+			100*float64(i)/float64(comicsCount),
+			i,
+			comicsCount)
 	}
-}
 
-func initDB() {
 	f, err := os.Create("db.json")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer f.Close()
 
-	for i := 1; i < 2; i++ {
-		comics, err := GetComics(i)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		if err := json.NewEncoder(f).Encode(comics); err != nil {
-			log.Fatal(err)
-		}
+	enc := json.NewEncoder(f)
+	enc.SetIndent("", " ")
+	if err := enc.Encode(result); err != nil {
+		log.Fatal(err)
 	}
 }
 
-func search(args []string) {
+func comicsCount() int {
+	resp, err := http.Get(UrlCount)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		log.Fatalf("unable to get: %v\n", resp.Status)
+	}
+
+	comics := &Comics{}
+	if err := json.NewDecoder(resp.Body).Decode(comics); err != nil {
+		log.Fatal(err)
+	}
+	return comics.Num
+}
+
+func Search(args []string) {
 	comics, err := GetDBComics()
 	if err != nil {
 		log.Fatal(err)
@@ -62,9 +78,8 @@ func search(args []string) {
 
 	for _, c := range comics {
 		for _, arg := range args {
-
-			if strings.Contains(c.Transcript, args[0]) {
-
+			if strings.Contains(c.Transcript, arg) {
+				fmt.Printf("\n#%d\nlink: %s\ntxt: %s\n", c.Num, c.Img, c.Transcript)
 			}
 		}
 	}
@@ -78,7 +93,17 @@ func GetDBComics() ([]Comics, error) {
 	defer f.Close()
 
 	var comics []Comics
-	if err := json.NewDecoder(f).Decode(&comics); err != nil {
+	scan := bufio.NewScanner(f)
+	for scan.Scan() {
+		txt := scan.Bytes()
+		if err := json.Unmarshal(txt, &comics); err != nil {
+			fmt.Println(string(txt))
+			fmt.Println(err)
+			fmt.Println(comics)
+			return nil, err
+		}
+	}
+	if err := scan.Err(); err != nil {
 		return nil, err
 	}
 
@@ -94,7 +119,7 @@ func GetComics(n int) (*Comics, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unable get data: %v\n", err)
+		return nil, fmt.Errorf("unable get data for %d comics: %v", n, resp.Status)
 	}
 
 	comics := &Comics{}
