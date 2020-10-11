@@ -11,8 +11,11 @@ import (
 	"strings"
 )
 
-const usage = `poster MOVIE_TITLE`
-const UrlFormat = "https://www.omdbapi.com/?apikey=%x&t=%s"
+const (
+	Usage     = `poster MOVIE_TITLE`
+	UrlFormat = "https://www.omdbapi.com/?apikey=%s&t=%s"
+	ApiKey    = "253d414a"
+)
 
 type Movie struct {
 	Title  string
@@ -27,7 +30,7 @@ func (m *Movie) Filename() string {
 
 func main() {
 	if len(os.Args) < 2 {
-		log.Fatal(usage)
+		log.Fatal(Usage)
 	}
 
 	m, err := GetMovie(os.Args[1])
@@ -41,7 +44,7 @@ func main() {
 }
 
 func GetMovie(title string) (*Movie, error) {
-	url_ := fmt.Sprintf(UrlFormat, 0x253d414a, title)
+	url_ := fmt.Sprintf(UrlFormat, ApiKey, title)
 	resp, err := http.Get(url_)
 	if err != nil {
 		return nil, err
