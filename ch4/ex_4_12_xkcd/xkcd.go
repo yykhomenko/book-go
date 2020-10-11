@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -93,17 +92,8 @@ func GetDBComics() ([]Comics, error) {
 	defer f.Close()
 
 	var comics []Comics
-	scan := bufio.NewScanner(f)
-	for scan.Scan() {
-		txt := scan.Bytes()
-		if err := json.Unmarshal(txt, &comics); err != nil {
-			fmt.Println(string(txt))
-			fmt.Println(err)
-			fmt.Println(comics)
-			return nil, err
-		}
-	}
-	if err := scan.Err(); err != nil {
+	if err := json.NewDecoder(f).Decode(&comics); err != nil {
+		fmt.Println(comics)
 		return nil, err
 	}
 
