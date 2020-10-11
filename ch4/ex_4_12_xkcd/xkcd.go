@@ -93,7 +93,6 @@ func GetDBComics() ([]Comics, error) {
 
 	var comics []Comics
 	if err := json.NewDecoder(f).Decode(&comics); err != nil {
-		fmt.Println(comics)
 		return nil, err
 	}
 
