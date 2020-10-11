@@ -1,3 +1,4 @@
+// go build -o poster && ./poster predator
 package main
 
 import (
