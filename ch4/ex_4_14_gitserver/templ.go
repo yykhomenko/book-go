@@ -12,7 +12,7 @@ var indexPage = template.Must(template.New("index").Parse(`
 `))
 
 var issuesPage = template.Must(template.New("issues").Parse(`
-<h1>{{.TotalCount}} themes</h1>
+<h1>Issues</h1>
 <a href='/'>Index</a>
 <table>
 <tr style='text-align: left'>
@@ -21,7 +21,7 @@ var issuesPage = template.Must(template.New("issues").Parse(`
 	<th>User</th>
 	<th>Title</th>
 </tr>
-{{range .Items}}
+{{range .}}
 <tr>
 	<td><a href='{{.HTMLURL}}'>{{.Number}}</a></td>
 	<td>{{.State}}</td>

@@ -13,14 +13,14 @@ func main() {
 		log.Fatal("usage: gitserver keyword1 [..., keywordN]")
 	}
 
-	searchResult, err := github.SearchIssues(os.Args[1:])
+	searchResult, err := github.GetIssues(os.Args[1], os.Args[2])
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("unable get issues:", err)
 	}
 
 	commits, err := github.GetCommits(os.Args[1], os.Args[2])
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("unable get commits:", err)
 	}
 
 	_ = commits
