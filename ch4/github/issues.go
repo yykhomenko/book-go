@@ -51,26 +51,6 @@ func SearchIssues(terms []string) (*IssuesSearchResult, error) {
 	return &result, nil
 }
 
-func GetIssue(owner, repo, number string) (*Issue, error) {
-	url := strings.Join([]string{APIURL, "repos", owner, repo, "issues", number}, "/")
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("get error: %s", resp.Status)
-	}
-
-	var issue Issue
-	if err := json.NewDecoder(resp.Body).Decode(&issue); err != nil {
-		return nil, err
-	}
-
-	return &issue, nil
-}
-
 func GetIssues(owner, repo string) ([]Issue, error) {
 	url := strings.Join([]string{APIURL, "repos", owner, repo, "issues"}, "/")
 	resp, err := http.Get(url)
@@ -89,6 +69,26 @@ func GetIssues(owner, repo string) ([]Issue, error) {
 	}
 
 	return issue, nil
+}
+
+func GetIssue(owner, repo, number string) (*Issue, error) {
+	url := strings.Join([]string{APIURL, "repos", owner, repo, "issues", number}, "/")
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("get error: %s", resp.Status)
+	}
+
+	var issue Issue
+	if err := json.NewDecoder(resp.Body).Decode(&issue); err != nil {
+		return nil, err
+	}
+
+	return &issue, nil
 }
 
 func CreateIssue(owner, repo, title string) (*Issue, error) {
