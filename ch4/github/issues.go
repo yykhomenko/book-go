@@ -9,7 +9,25 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
+
+const IssuesURL = "https://api.github.com/search/issues"
+
+type IssuesSearchResult struct {
+	TotalCount int `json:"total_count"`
+	Items      []*Issue
+}
+
+type Issue struct {
+	Number    int
+	HTMLURL   string `json:"html_url"`
+	Title     string
+	State     string
+	User      *User
+	CreatedAt time.Time `json:"created_at"`
+	Body      string
+}
 
 func SearchIssues(terms []string) (*IssuesSearchResult, error) {
 	q := url.QueryEscape(strings.Join(terms, " "))
