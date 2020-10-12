@@ -24,19 +24,12 @@ func main() {
 		log.Fatal("unable get commits:", err)
 	}
 
-	// authorFreq := make(map[github.User]int)
-	// for _, commit := range commits {
-	// 	authorFreq[commit.Author]++
-	// }
-	//
-	// var committers []github.Committer
-	// for login, count := range authorFreq {
-	// 	committer := github.Committer{
-	// 		Author:      nil,
-	// 		CommitCount: 0,
-	// 	}
-	// 	committers = append(committers, )
-	// }
+	authorFreq := make(map[github.User]int)
+	for _, commit := range commits {
+		if commit.Author != nil {
+			authorFreq[*commit.Author]++
+		}
+	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
 		if err := indexPage.Execute(w, nil); err != nil {
@@ -57,7 +50,7 @@ func main() {
 	})
 
 	http.HandleFunc("/committers", func(w http.ResponseWriter, _ *http.Request) {
-		if err := committersPage.Execute(w, committersPage); err != nil {
+		if err := committersPage.Execute(w, authorFreq); err != nil {
 			log.Println(err)
 		}
 	})

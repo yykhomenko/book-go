@@ -53,18 +53,18 @@ var commitsPage = template.Must(template.New("commits").Parse(`
 </table>
 `))
 
-var committersPage = template.Must(template.New("authors").Parse(`
-<h1>Authors</h1>
+var committersPage = template.Must(template.New("committers").Parse(`
+<h1>Committers</h1>
 <a href='/'>Index</a>
 <table>
 <tr style='text-align: left'>
 	<th>User</th>
 	<th>Commits</th>
 </tr>
-{{range $user, $count := .}}
+{{range $k, $v := .}}
 <tr>
-	// <td><a href='{{$user.HTMLURL}}'>{{$user.Login}}</a></td>
-	// <td>{{$count}}</td>
+	<td><a href='{{$k.HTMLURL}}'>{{$k.Login}}</a></td>
+	<td>{{$v}}</td>
 </tr>
 {{end}}
 </table>
