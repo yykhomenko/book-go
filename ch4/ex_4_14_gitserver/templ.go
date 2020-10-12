@@ -32,22 +32,22 @@ var issuesPage = template.Must(template.New("issues").Parse(`
 </table>
 `))
 
-var usersPage = template.Must(template.New("users").Parse(`
-<h1>{{.TotalCount}} themes</h1>
+var commitsPage = template.Must(template.New("users").Parse(`
+<h1>Commits</h1>
 <a href='/'>Index</a>
 <table>
 <tr style='text-align: left'>
-	<th>#</th>
-	<th>State</th>
+	<th>Date</th>
+	<th>SHA</th>
 	<th>User</th>
-	<th>Title</th>
+	<th>Message</th>
 </tr>
-{{range .Items}}
+{{range .}}
 <tr>
-	<td><a href='{{.HTMLURL}}'>{{.Number}}</a></td>
-	<td>{{.State}}</td>
-	<td><a href='{{.User.HTMLURL}}'>{{.User.Login}}</a></td>
-	<td><a href='{{.HTMLURL}}'>{{.Title}}</a></td>
+	<td>{{.Commit.Author.Date}}</td>
+	<td><a href='{{.HTMLURL}}'>{{.SHA}}</a></td>
+	<td><a href='{{.Author.HTMLURL}}'>{{.Author.Login}}</a></td>
+	<td>{{.Commit.Message}}</td>
 </tr>
 {{end}}
 </table>
