@@ -1,3 +1,4 @@
+// go build -o gitserver && ./gitserver yykhomenko test
 package main
 
 import (
@@ -23,10 +24,18 @@ func main() {
 		log.Fatal("unable get commits:", err)
 	}
 
-	_ = commits
-	// users, err := github.SearchIssues(os.Args[1:])
-	// if err != nil {
-	// 	log.Fatal(err)
+	// authorFreq := make(map[github.User]int)
+	// for _, commit := range commits {
+	// 	authorFreq[commit.Author]++
+	// }
+	//
+	// var committers []github.Committer
+	// for login, count := range authorFreq {
+	// 	committer := github.Committer{
+	// 		Author:      nil,
+	// 		CommitCount: 0,
+	// 	}
+	// 	committers = append(committers, )
 	// }
 
 	http.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
@@ -47,11 +56,11 @@ func main() {
 		}
 	})
 
-	// http.HandleFunc("/users", func(w http.ResponseWriter, _ *http.Request) {
-	// 	if err := usersPage.Execute(w, usersResult); err != nil {
-	// 		log.Println(err)
-	// 	}
-	// })
+	http.HandleFunc("/committers", func(w http.ResponseWriter, _ *http.Request) {
+		if err := committersPage.Execute(w, committersPage); err != nil {
+			log.Println(err)
+		}
+	})
 
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }

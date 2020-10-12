@@ -16,6 +16,11 @@ type CommitInfo struct {
 	HTMLURL string `json:"html_url"`
 }
 
+type Committer struct {
+	Author      *User
+	CommitCount int
+}
+
 type Commit struct {
 	Author  Person
 	Message string

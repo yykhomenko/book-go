@@ -7,7 +7,7 @@ var indexPage = template.Must(template.New("index").Parse(`
 <table>
 <tr><td><a href='/issues'>Issues</a></td></tr>
 <tr><td><a href='/commits'>Commits</a></td></tr>
-<tr><td><a href='/users'>Users</a></td></tr>
+<tr><td><a href='/committers'>Committers</a></td></tr>
 </table>
 `))
 
@@ -48,6 +48,23 @@ var commitsPage = template.Must(template.New("commits").Parse(`
 	<td><a href='{{.HTMLURL}}'>{{.SHA}}</a></td>
 	<td><a href='{{.Author.HTMLURL}}'>{{.Author.Login}}</a></td>
 	<td>{{.Commit.Message}}</td>
+</tr>
+{{end}}
+</table>
+`))
+
+var committersPage = template.Must(template.New("authors").Parse(`
+<h1>Authors</h1>
+<a href='/'>Index</a>
+<table>
+<tr style='text-align: left'>
+	<th>User</th>
+	<th>Commits</th>
+</tr>
+{{range $user, $count := .}}
+<tr>
+	// <td><a href='{{$user.HTMLURL}}'>{{$user.Login}}</a></td>
+	// <td>{{$count}}</td>
 </tr>
 {{end}}
 </table>

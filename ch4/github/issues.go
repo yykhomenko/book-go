@@ -51,7 +51,7 @@ func SearchIssues(terms []string) (*IssuesSearchResult, error) {
 	return &result, nil
 }
 
-func GetIssues(owner, repo string) ([]Issue, error) {
+func GetIssues(owner, repo string) ([]*Issue, error) {
 	url := strings.Join([]string{APIURL, "repos", owner, repo, "issues"}, "/")
 	resp, err := http.Get(url)
 	if err != nil {
@@ -63,7 +63,7 @@ func GetIssues(owner, repo string) ([]Issue, error) {
 		return nil, fmt.Errorf("get error: %s", resp.Status)
 	}
 
-	var issue []Issue
+	var issue []*Issue
 	if err := json.NewDecoder(resp.Body).Decode(&issue); err != nil {
 		return nil, err
 	}
