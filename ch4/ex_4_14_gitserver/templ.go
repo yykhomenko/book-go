@@ -32,7 +32,7 @@ var issuesPage = template.Must(template.New("issues").Parse(`
 </table>
 `))
 
-var commitsPage = template.Must(template.New("users").Parse(`
+var commitsPage = template.Must(template.New("commits").Parse(`
 <h1>Commits</h1>
 <a href='/'>Index</a>
 <table>
