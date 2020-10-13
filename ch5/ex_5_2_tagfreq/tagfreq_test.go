@@ -11,9 +11,9 @@ import (
 )
 
 var HTMLText = []byte(`
-<a href="https://example.org/link"</a>
-<a href="https://example.org/link"</a>
-<a href="https://example.org/link"</a>
+<a href="https://example.org/link"></a>
+<a href="https://example.org/link"></a>
+<a href="https://example.org/link"></a>
 `)
 
 func Test_visit(t *testing.T) {
