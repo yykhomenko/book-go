@@ -12,8 +12,7 @@ import (
 
 func main() {
 	if err := WaitForServer(os.Args[1]); err != nil {
-		fmt.Fprintf(os.Stderr, "server down: %v\n", err)
-		os.Exit(1)
+		log.Fatalf("server down: %v\n", err)
 	}
 }
 
