@@ -11,6 +11,8 @@ import (
 )
 
 func main() {
+	log.SetPrefix("wait: ")
+	log.SetFlags(0)
 	if err := WaitForServer(os.Args[1]); err != nil {
 		log.Fatalf("server down: %v\n", err)
 	}
