@@ -8,6 +8,13 @@ import (
 	"golang.org/x/net/html"
 )
 
+var attrs = map[string]string{
+	"a":      "href",
+	"img":    "src",
+	"script": "src",
+	"link":   "href",
+}
+
 func main() {
 	doc, err := html.Parse(os.Stdin)
 	if err != nil {
@@ -21,15 +28,9 @@ func main() {
 }
 
 func visit(links []string, n *html.Node) []string {
-
-	// a 				href
-	// image 		src
-	// script		src
-	// link			href
-
-	if n.Type == html.ElementNode && n.Data == "a" {
+	if n.Type == html.ElementNode && attrs[n.Data] != "" {
 		for _, a := range n.Attr {
-			if a.Key == "href" {
+			if a.Key == attrs[n.Data] {
 				links = append(links, a.Val)
 			}
 		}
