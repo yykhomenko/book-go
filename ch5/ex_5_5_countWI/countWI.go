@@ -1,4 +1,4 @@
-// go run countWI.go https://golang.org
+// go run countWI.go https://golang.org // 504(words) 3(images)
 package main
 
 import (
