@@ -1,3 +1,4 @@
+// Findlinks prints urls from link, image, script and list of styles.
 // fetch golang.org | go run findlinks.go
 package main
 
