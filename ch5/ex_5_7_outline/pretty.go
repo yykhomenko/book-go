@@ -1,7 +1,10 @@
+// Pretty pretty-prints html.
 package main
 
 import (
 	"fmt"
+	"io"
+	"log"
 	"os"
 	"strings"
 
@@ -10,61 +13,113 @@ import (
 
 var depth int
 
-func ForEachNode(n *html.Node, pre, post func(n *html.Node)) {
+type PrettyPrinter struct {
+	w   io.Writer
+	err error
+}
+
+func NewPrettyPrinter() PrettyPrinter {
+	return PrettyPrinter{}
+}
+
+func (pp PrettyPrinter) Pretty(w io.Writer, n *html.Node) error {
+	pp.w = w
+	pp.err = nil
+	pp.forEachNode(n, pp.start, pp.end)
+	return pp.Err()
+}
+
+func (pp PrettyPrinter) Err() error {
+	return pp.err
+}
+
+func (pp PrettyPrinter) forEachNode(n *html.Node, pre, post func(n *html.Node)) {
 	if pre != nil {
 		pre(n)
 	}
-
-	for c := n.FirstChild; c != nil; c = c.NextSibling {
-		ForEachNode(c, pre, post)
+	if pp.Err() != nil {
+		return
 	}
-
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		pp.forEachNode(c, pre, post)
+	}
 	if post != nil {
 		post(n)
 	}
-}
-
-func start(n *html.Node) {
-	switch {
-	case n.Type == html.CommentNode:
-	case n.Type == html.TextNode:
-	case n.Type == html.ElementNode:
-		startElement(n)
+	if pp.Err() != nil {
+		return
 	}
 }
 
-func end(n *html.Node) {
-	switch {
-	case n.Type == html.CommentNode:
-	case n.Type == html.TextNode:
-	case n.Type == html.ElementNode:
-		endElement(n)
-	}
+func (pp PrettyPrinter) printf(format string, args ...interface{}) {
+	_, err := fmt.Fprintf(pp.w, format, args...)
+	pp.err = err
 }
 
-func startElement(n *html.Node) {
-	var attrs []string
+func (pp PrettyPrinter) startElement(n *html.Node) {
+	end := ">"
+	if n.FirstChild == nil {
+		end = "/>"
+	}
+
+	attrs := make([]string, 0, len(n.Attr))
 	for _, a := range n.Attr {
-		attrs = append(attrs, fmt.Sprintf("%s='%s'", a.Key, a.Val))
+		attrs = append(attrs, fmt.Sprintf(`%s="%s"`, a.Key, a.Val))
+	}
+	attrStr := ""
+	if len(n.Attr) > 0 {
+		attrStr = " " + strings.Join(attrs, " ")
 	}
 
-	attrsStr := strings.Join(attrs, " ")
-	fmt.Printf("%*s<%s %s>\n", depth*2, "", n.Data, attrsStr)
+	name := n.Data
+
+	pp.printf("%*s<%s%s%s\n", depth*2, "", name, attrStr, end)
 	depth++
 }
 
-func endElement(n *html.Node) {
-	if n.Type == html.ElementNode {
-		depth--
-		fmt.Printf("%*s</%s>\n", depth*2, "", n.Data)
+func (pp PrettyPrinter) endElement(n *html.Node) {
+	depth--
+	if n.FirstChild == nil {
+		return
+	}
+	pp.printf("%*s</%s>\n", depth*2, "", n.Data)
+}
+
+func (pp PrettyPrinter) startText(n *html.Node) {
+	text := strings.TrimSpace(n.Data)
+	if len(text) == 0 {
+		return
+	}
+	pp.printf("%*s%s\n", depth*2, "", n.Data)
+}
+
+func (pp PrettyPrinter) startComment(n *html.Node) {
+	pp.printf("<!--%s-->\n", n.Data)
+}
+
+func (pp PrettyPrinter) start(n *html.Node) {
+	switch n.Type {
+	case html.ElementNode:
+		pp.startElement(n)
+	case html.TextNode:
+		pp.startText(n)
+	case html.CommentNode:
+		pp.startComment(n)
+	}
+}
+
+func (pp PrettyPrinter) end(n *html.Node) {
+	switch n.Type {
+	case html.ElementNode:
+		pp.endElement(n)
 	}
 }
 
 func main() {
 	doc, err := html.Parse(os.Stdin)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "findlinks: %v\n", err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
-	ForEachNode(doc, start, end)
+	pp := NewPrettyPrinter()
+	pp.Pretty(os.Stdout, doc)
 }
