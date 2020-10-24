@@ -15,16 +15,16 @@ func main() {
 		fmt.Fprintf(os.Stderr, "findlinks: %v\n", err)
 		os.Exit(1)
 	}
-	ForEachNode(doc, startElement, endElement)
+	forEachNode(doc, startElement, endElement)
 }
 
-func ForEachNode(n *html.Node, pre, post func(n *html.Node)) {
+func forEachNode(n *html.Node, pre, post func(n *html.Node)) {
 	if pre != nil {
 		pre(n)
 	}
 
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
-		ForEachNode(c, pre, post)
+		forEachNode(c, pre, post)
 	}
 
 	if post != nil {
