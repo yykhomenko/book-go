@@ -1,7 +1,13 @@
 package ex_5_9_expand
 
-import "strings"
+import (
+	"regexp"
+)
 
-func expand(s string, f func(string) string) string {
-	return strings.ReplaceAll(s, "$foo", f("foo"))
+var r = regexp.MustCompile(`\$\w+`)
+
+func expand(src string, f func(string) string) string {
+	return r.ReplaceAllStringFunc(src, func(s string) string {
+		return f(s[1:])
+	})
 }
