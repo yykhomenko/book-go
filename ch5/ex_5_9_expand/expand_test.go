@@ -7,12 +7,19 @@ import (
 )
 
 func TestExpand(t *testing.T) {
-	s := "replace $foo and $bar"
-	actual := expand(s, double)
-	expected := "replace foofoo and barbar"
+	s := "Hello $user, you have $messCount unread messages"
+	actual := expand(s, replacer)
+	expected := "Hello Yurii, you have 2 unread messages"
 	assert.Equal(t, expected, actual)
 }
 
-func double(arg string) string {
-	return arg + arg
+func replacer(arg string) string {
+	switch arg {
+	case "user":
+		return "Yurii"
+	case "messCount":
+		return "2"
+	default:
+		return "<unknown>"
+	}
 }
