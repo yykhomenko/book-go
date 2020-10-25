@@ -2,7 +2,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"io"
 	"log"
@@ -93,7 +92,7 @@ func download(link string) error {
 	}
 	defer file.Close()
 
-	io.Copy(bufio.NewWriter(file), resp.Body)
+	_, err = io.Copy(file, resp.Body)
 
-	return nil
+	return err
 }
