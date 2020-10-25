@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -10,7 +11,9 @@ import (
 )
 
 func main() {
-	title(os.Args[1])
+	if err := title(os.Args[1]); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func title(url string) error {
