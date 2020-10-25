@@ -2,8 +2,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -74,17 +75,25 @@ func download(link string) error {
 		return fmt.Errorf("get %s: %v", link, resp.Status)
 	}
 
-	_, err = ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-
 	u, err := url.Parse(link)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(u.Host + u.Path)
+	path := strings.Join(strings.Split(u.Host+u.Path, "/"), string(os.PathSeparator))
+	filename := path + string(os.PathSeparator) + "index.html"
+
+	if err := os.MkdirAll(path, os.ModePerm); err != nil {
+		return err
+	}
+
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	io.Copy(bufio.NewWriter(file), resp.Body)
 
 	return nil
 }
