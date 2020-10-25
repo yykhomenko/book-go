@@ -13,7 +13,7 @@ func TestElementByID(t *testing.T) {
 	id := "title"
 	input := `
 <h1 id="test">example</h1>
-<h2 id="` + id + `">example</h1>`
+<h2 id="` + id + `">example</h2>`
 
 	doc, err := html.Parse(strings.NewReader(input))
 	if err != nil {
