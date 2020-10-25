@@ -3,7 +3,9 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"net/url"
 	"os"
 	"strings"
@@ -14,31 +16,6 @@ import (
 func main() {
 	urls := os.Args[1:]
 	breadthFirst(crawlOnlyHosts(urls), urls)
-}
-
-func crawlOnlyHosts(urls []string) func(string) []string {
-	var hosts []string
-	for _, u := range urls {
-		l, err := url.Parse(u)
-		if err != nil {
-			log.Fatalf("parse %s: %v/n", u, err)
-		}
-		hosts = append(hosts, l.Host)
-	}
-
-	return func(url string) []string {
-		for _, host := range hosts {
-			if strings.Contains(url, host) {
-				fmt.Println(url)
-				urls, err := links.Extract(url)
-				if err != nil {
-					log.Print(err)
-				}
-				return urls
-			}
-		}
-		return nil
-	}
 }
 
 func breadthFirst(f func(string) []string, worklist []string) {
@@ -53,4 +30,61 @@ func breadthFirst(f func(string) []string, worklist []string) {
 			}
 		}
 	}
+}
+
+func crawlOnlyHosts(urls []string) func(string) []string {
+	var hosts []string
+	for _, u := range urls {
+		l, err := url.Parse(u)
+		if err != nil {
+			log.Fatalf("parse %s: %v/n", u, err)
+		}
+		hosts = append(hosts, l.Host)
+	}
+
+	return func(link string) []string {
+		for _, host := range hosts {
+			if strings.Contains(link, host) {
+				fmt.Println(link)
+
+				if err := download(link); err != nil {
+					log.Print(err)
+				}
+
+				urls, err := links.Extract(link)
+				if err != nil {
+					log.Print(err)
+				}
+
+				return urls
+			}
+		}
+		return nil
+	}
+}
+
+func download(link string) error {
+	resp, err := http.Get(link)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("get %s: %v", link, resp.Status)
+	}
+
+	_, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	u, err := url.Parse(link)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(u.Host + u.Path)
+
+	return nil
 }
