@@ -15,7 +15,7 @@ func main() {
 
 	doc, err := html.Parse(os.Stdin)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "findlinks: %v\n", err)
+		fmt.Fprintf(os.Stderr, "HTML parse: %v\n", err)
 		os.Exit(1)
 	}
 
