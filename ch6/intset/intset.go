@@ -32,6 +32,20 @@ func (s *IntSet) UnionWith(t *IntSet) {
 	}
 }
 
+func (s *IntSet) Len() (sum int) {
+	for _, word := range s.words {
+		if word == 0 {
+			continue
+		}
+		for j := 0; j < 64; j++ {
+			if word&(1<<j) != 0 {
+				sum++
+			}
+		}
+	}
+	return
+}
+
 func (s *IntSet) String() string {
 	var buf bytes.Buffer
 	buf.WriteByte('{')
