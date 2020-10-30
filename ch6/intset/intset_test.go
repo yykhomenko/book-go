@@ -55,3 +55,12 @@ func TestClear(t *testing.T) {
 	x.Clear()
 	assert.Equal(t, 0, x.Len())
 }
+
+func TestCopy(t *testing.T) {
+	var x IntSet
+	x.Add(1)
+	x.Add(2)
+	y := x.Copy()
+	assert.True(t, y.Has(1))
+	assert.True(t, y.Has(2))
+}
