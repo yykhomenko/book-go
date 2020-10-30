@@ -9,6 +9,14 @@ type IntList struct {
 	Tail  *IntList
 }
 
+func (list *IntList) Map(f func(int) int) {
+	if list == nil {
+		return
+	}
+	list.Value = f(list.Value)
+	list.Tail.Map(f)
+}
+
 func (list *IntList) Sum() int {
 	if list == nil {
 		return 0
@@ -26,4 +34,9 @@ func (list *IntList) String() string {
 func main() {
 	list := IntList{1, &IntList{2, &IntList{3, nil}}}
 	fmt.Println(list.String())
+	fmt.Printf("sum = %d\n", list.Sum())
+	list.Map(func(i int) int {
+		return i * 3
+	})
+	fmt.Printf("map i*2 = %d\n", list.Sum())
 }
