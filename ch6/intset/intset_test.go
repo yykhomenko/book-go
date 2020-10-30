@@ -38,3 +38,11 @@ func TestLen(t *testing.T) {
 	x.Add(2)
 	assert.Equal(t, 2, x.Len())
 }
+
+func TestRemove(t *testing.T) {
+	x := IntSet{}
+	v := 4
+	x.Add(v)
+	x.Remove(v)
+	assert.False(t, x.Has(v))
+}
