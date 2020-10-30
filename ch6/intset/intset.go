@@ -71,3 +71,7 @@ func (s *IntSet) String() string {
 	buf.WriteByte('}')
 	return buf.String()
 }
+
+func (s *IntSet) Clear() {
+	s.words = nil
+}
