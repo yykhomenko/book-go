@@ -46,3 +46,12 @@ func TestRemove(t *testing.T) {
 	x.Remove(v)
 	assert.False(t, x.Has(v))
 }
+
+func TestClear(t *testing.T) {
+	x := IntSet{}
+	x.Add(1)
+	x.Add(3)
+	x.Add(5)
+	x.Clear()
+	assert.Equal(t, 0, x.Len())
+}
