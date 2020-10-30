@@ -46,6 +46,11 @@ func (s *IntSet) Len() (sum int) {
 	return
 }
 
+func (s *IntSet) Remove(v int) {
+	word, bit := v/64, uint(v%64)
+	s.words[word] ^= 1 << bit
+}
+
 func (s *IntSet) String() string {
 	var buf bytes.Buffer
 	buf.WriteByte('{')
