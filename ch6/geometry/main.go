@@ -1,7 +1,6 @@
-package main
+package geometry
 
 import (
-	"fmt"
 	"math"
 )
 
@@ -32,27 +31,27 @@ func (path Path) Distance() float64 {
 	return sum
 }
 
-func main() {
-	p := Point{1, 2}
-	q := Point{4, 6}
-	fmt.Println(Distance(p, q))
-	fmt.Println(p.Distance(q))
-
-	perim := Path{
-		{1, 1},
-		{5, 1},
-		{5, 4},
-		{1, 1},
-	}
-	fmt.Println(perim.Distance())
-
-	pptr := &Point{1, 2}
-	p1 := *pptr
-	pptr.Distance(q) // implicit (*pptr)
-	pptr.ScaleBy(2)
-	(&p1).ScaleBy(2)
-	p1.ScaleBy(2) // implicit (&p1)
-	fmt.Println(pptr)
-	fmt.Println(p1)
-	(&Point{1, 2}).ScaleBy(2)
-}
+// func main() {
+// 	p := Point{1, 2}
+// 	q := Point{4, 6}
+// 	fmt.Println(Distance(p, q))
+// 	fmt.Println(p.Distance(q))
+//
+// 	perim := Path{
+// 		{1, 1},
+// 		{5, 1},
+// 		{5, 4},
+// 		{1, 1},
+// 	}
+// 	fmt.Println(perim.Distance())
+//
+// 	pptr := &Point{1, 2}
+// 	p1 := *pptr
+// 	pptr.Distance(q) // implicit (*pptr)
+// 	pptr.ScaleBy(2)
+// 	(&p1).ScaleBy(2)
+// 	p1.ScaleBy(2) // implicit (&p1)
+// 	fmt.Println(pptr)
+// 	fmt.Println(p1)
+// 	(&Point{1, 2}).ScaleBy(2)
+// }
