@@ -23,6 +23,7 @@ func (p *Point) ScaleBy(factor float64) {
 
 func (path Path) Distance() float64 {
 	sum := 0.0
+	(*Point).ScaleBy(&Point{}, 2)
 	for i := range path {
 		if i > 0 {
 			sum += path[i-1].Distance(path[i])
@@ -44,4 +45,14 @@ func main() {
 		{1, 1},
 	}
 	fmt.Println(perim.Distance())
+
+	pptr := &Point{1, 2}
+	p1 := *pptr
+	pptr.Distance(q) // implicit (*pptr)
+	pptr.ScaleBy(2)
+	(&p1).ScaleBy(2)
+	p1.ScaleBy(2) // implicit (&p1)
+	fmt.Println(pptr)
+	fmt.Println(p1)
+	(&Point{1, 2}).ScaleBy(2)
 }
