@@ -64,3 +64,12 @@ func TestCopy(t *testing.T) {
 	assert.True(t, y.Has(1))
 	assert.True(t, y.Has(2))
 }
+
+func TestAddAll(t *testing.T) {
+	var x IntSet
+	x.Add(1)
+	x.Add(2)
+	x.AddAll(3, 4)
+	assert.True(t, x.Has(3))
+	assert.True(t, x.Has(4))
+}
