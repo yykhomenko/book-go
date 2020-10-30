@@ -7,16 +7,16 @@ import (
 )
 
 func TestAdd(t *testing.T) {
-	s := IntSet{}
-	s.Add(4)
-	s.Add(2)
-	assert.Equal(t, "{2 4}", s.String())
+	x := IntSet{}
+	x.Add(4)
+	x.Add(2)
+	assert.Equal(t, "{2 4}", x.String())
 }
 
 func TestHas(t *testing.T) {
-	s := IntSet{}
-	s.Add(4)
-	s.Add(2)
-	assert.True(t, s.Has(4))
-	assert.True(t, !s.Has(3))
+	x := IntSet{}
+	x.Add(4)
+	x.Add(2)
+	assert.True(t, x.Has(4))
+	assert.True(t, !x.Has(3))
 }
