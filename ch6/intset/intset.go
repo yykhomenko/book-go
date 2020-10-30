@@ -46,9 +46,17 @@ func (s *IntSet) Len() (sum int) {
 	return
 }
 
-func (s *IntSet) Remove(v int) {
-	word, bit := v/64, uint(v%64)
+func (s *IntSet) Remove(x int) {
+	word, bit := x/64, uint(x%64)
 	s.words[word] ^= 1 << bit
+}
+
+func (s *IntSet) Copy() *IntSet {
+	cp := make([]uint64, len(s.words), len(s.words))
+	for i, v := range s.words {
+		cp[i] = v
+	}
+	return &IntSet{cp}
 }
 
 func (s *IntSet) String() string {
