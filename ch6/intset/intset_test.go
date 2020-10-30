@@ -31,3 +31,10 @@ func TestUnionWith(t *testing.T) {
 	x.UnionWith(&y)
 	assert.Equal(t, "{1 9 42 144}", x.String())
 }
+
+func TestLen(t *testing.T) {
+	x := IntSet{}
+	x.Add(4)
+	x.Add(2)
+	assert.Equal(t, 2, x.Len())
+}
