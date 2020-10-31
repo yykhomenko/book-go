@@ -99,3 +99,13 @@ func (s *IntSet) IntersectWith(t *IntSet) {
 	}
 	s.words = words
 }
+
+func (s *IntSet) DifferenceWith(t *IntSet) {
+	for i, tword := range t.words {
+		if i < len(s.words) {
+			s.words[i] ^= tword
+		} else {
+			s.words = append(s.words, tword)
+		}
+	}
+}
