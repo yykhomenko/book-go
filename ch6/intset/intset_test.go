@@ -76,7 +76,18 @@ func TestUnionWith(t *testing.T) {
 
 func TestIntersectWith(t *testing.T) {
 	var x, y IntSet
-	x.Add(100)
+	x.Add(32)
+	x.Add(200)
+	x.Add(300)
+	y.Add(300)
+	y.Add(400)
+	x.IntersectWith(&y)
+	assert.Equal(t, "{300}", x.String())
+}
+
+func TestDifferenceWith(t *testing.T) {
+	var x, y IntSet
+	x.Add(32)
 	x.Add(200)
 	x.Add(300)
 	y.Add(300)
