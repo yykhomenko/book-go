@@ -66,12 +66,11 @@ func (s *IntSet) Clear() {
 
 func (s *IntSet) Len() (sum int) {
 	for _, word := range s.words {
-		if word == 0 {
-			continue
-		}
-		for j := 0; j < 64; j++ {
-			if word&(1<<j) != 0 {
-				sum++
+		if word != 0 {
+			for j := 0; j < 64; j++ {
+				if word&(1<<j) != 0 {
+					sum++
+				}
 			}
 		}
 	}
