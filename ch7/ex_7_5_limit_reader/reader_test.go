@@ -1,6 +1,7 @@
 package reader
 
 import (
+	"io"
 	"strings"
 	"testing"
 
@@ -12,6 +13,10 @@ func TestLimitReader(t *testing.T) {
 	lr := LimitReader(r, 3)
 	data := make([]byte, 10)
 	n, err := lr.Read(data)
-	assert.Error(t, err)
+	assert.Equal(t, err, io.EOF)
 	assert.Equal(t, 3, n)
+
+	expected := make([]byte, 10)
+	copy(expected, "Exa")
+	assert.Equal(t, expected, data)
 }
