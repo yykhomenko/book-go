@@ -9,7 +9,7 @@ import (
 
 func TestNewReader(t *testing.T) {
 	data := "<title>Example</title>"
-	r := NewReader(data)
-	_, err := html.Parse(*r)
+	doc, err := html.Parse(NewReader(data))
 	assert.NoError(t, err)
+	assert.Equal(t, "Example", doc.FirstChild.FirstChild.FirstChild.FirstChild.Data)
 }
