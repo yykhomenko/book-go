@@ -44,37 +44,10 @@ func (s *IntSet) Add(x int) {
 	s.words[word] |= 1 << bit
 }
 
-func (s *IntSet) UnionWith(t *IntSet) {
-	for i, tword := range t.words {
-		if i < len(s.words) {
-			s.words[i] |= tword
-		} else {
-			s.words = append(s.words, tword)
-		}
+func (s *IntSet) AddAll(vs ...int) {
+	for _, v := range vs {
+		s.Add(v)
 	}
-}
-
-func (s *IntSet) IntersectWith(t *IntSet) {
-	minLen := int(math.Min(float64(len(s.words)), float64(len(t.words))))
-	var words []uint64
-	for i := 0; i < minLen; i++ {
-		words = append(words, s.words[i]&t.words[i])
-	}
-	s.words = words
-}
-
-func (s *IntSet) Len() (sum int) {
-	for _, word := range s.words {
-		if word == 0 {
-			continue
-		}
-		for j := 0; j < 64; j++ {
-			if word&(1<<j) != 0 {
-				sum++
-			}
-		}
-	}
-	return
 }
 
 func (s *IntSet) Remove(x int) {
@@ -94,8 +67,35 @@ func (s *IntSet) Clear() {
 	s.words = nil
 }
 
-func (s *IntSet) AddAll(vs ...int) {
-	for _, v := range vs {
-		s.Add(v)
+func (s *IntSet) Len() (sum int) {
+	for _, word := range s.words {
+		if word == 0 {
+			continue
+		}
+		for j := 0; j < 64; j++ {
+			if word&(1<<j) != 0 {
+				sum++
+			}
+		}
 	}
+	return
+}
+
+func (s *IntSet) UnionWith(t *IntSet) {
+	for i, tword := range t.words {
+		if i < len(s.words) {
+			s.words[i] |= tword
+		} else {
+			s.words = append(s.words, tword)
+		}
+	}
+}
+
+func (s *IntSet) IntersectWith(t *IntSet) {
+	minLen := int(math.Min(float64(len(s.words)), float64(len(t.words))))
+	var words []uint64
+	for i := 0; i < minLen; i++ {
+		words = append(words, s.words[i]&t.words[i])
+	}
+	s.words = words
 }
