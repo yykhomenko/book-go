@@ -34,13 +34,13 @@ func TestUnionWith(t *testing.T) {
 
 func TestIntersectWith(t *testing.T) {
 	var x, y IntSet
-	x.Add(1)
-	x.Add(2)
-	x.Add(3)
-	y.Add(3)
-	y.Add(4)
+	x.Add(100)
+	x.Add(200)
+	x.Add(300)
+	y.Add(300)
+	y.Add(400)
 	x.IntersectWith(&y)
-	assert.Equal(t, "{3}", x.String())
+	assert.Equal(t, "{300}", x.String())
 }
 
 func TestLen(t *testing.T) {
