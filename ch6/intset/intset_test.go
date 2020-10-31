@@ -63,6 +63,13 @@ func TestLen(t *testing.T) {
 	assert.Equal(t, 2, x.Len())
 }
 
+func TestElems(t *testing.T) {
+	x := IntSet{}
+	x.Add(4)
+	x.Add(2)
+	assert.Equal(t, []uint64{2, 4}, x.Elems())
+}
+
 func TestUnionWith(t *testing.T) {
 	var x, y IntSet
 	x.Add(1)

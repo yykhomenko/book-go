@@ -78,6 +78,10 @@ func (s *IntSet) Len() (sum int) {
 	return
 }
 
+func (s *IntSet) Elems() []uint64 {
+	return nil
+}
+
 func (s *IntSet) UnionWith(t *IntSet) {
 	for i, tword := range t.words {
 		if i < len(s.words) {
