@@ -13,5 +13,5 @@ func TestCountingWriter(t *testing.T) {
 	w.Write([]byte("Hello world!"))
 
 	assert.Equal(t, 12, buf.Len())
-	assert.Equal(t, 12, *n)
+	assert.Equal(t, 12, int(*n))
 }
