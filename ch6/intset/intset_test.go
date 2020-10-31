@@ -85,6 +85,21 @@ func TestIntersectWith(t *testing.T) {
 	assert.Equal(t, "{300}", x.String())
 }
 
+func TestDifferenceWith(t *testing.T) {
+	var x, y IntSet
+	x.Add(1)
+	x.Add(2)
+	x.Add(3)
+	y.Add(1)
+	y.Add(4)
+	y.Add(5)
+	z := x.Copy()
+	x.SymmetricDifferenceWith(&y)
+	assert.Equal(t, "{2 3}", x.String())
+	y.SymmetricDifferenceWith(z)
+	assert.Equal(t, "{4 5}", x.String())
+}
+
 func TestSymmetricDifferenceWith(t *testing.T) {
 	var x, y IntSet
 	x.Add(1)
