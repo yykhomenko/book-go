@@ -75,8 +75,17 @@ func (s *IntSet) Len() (sum int) {
 	return
 }
 
-func (s *IntSet) Elems() []uint64 {
-	return nil
+func (s *IntSet) Elems() (elems []uint64) {
+	for i, word := range s.words {
+		if word != 0 {
+			for j := 0; j < 64; j++ {
+				if word&(1<<uint(j)) != 0 {
+					elems = append(elems, uint64(64*i+j))
+				}
+			}
+		}
+	}
+	return
 }
 
 func (s *IntSet) UnionWith(t *IntSet) {
