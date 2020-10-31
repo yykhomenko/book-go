@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"math"
 )
 
 type IntSet struct {
@@ -53,6 +54,15 @@ func (s *IntSet) UnionWith(t *IntSet) {
 	}
 }
 
+func (s *IntSet) IntersectWith(t *IntSet) {
+	minLen := int(math.Min(float64(len(s.words)), float64(len(t.words))))
+	var words []uint64
+	for i := 0; i < minLen; i++ {
+		words = append(words, s.words[i]&t.words[i])
+	}
+	s.words = words
+}
+
 func (s *IntSet) Len() (sum int) {
 	for _, word := range s.words {
 		if word == 0 {
@@ -69,7 +79,7 @@ func (s *IntSet) Len() (sum int) {
 
 func (s *IntSet) Remove(x int) {
 	word, bit := x/64, uint(x%64)
-	s.words[word] ^= 1 << bit
+	s.words[word] &^= 1 << bit
 }
 
 func (s *IntSet) Copy() *IntSet {
