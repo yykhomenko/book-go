@@ -67,7 +67,7 @@ func TestElems(t *testing.T) {
 	x := IntSet{}
 	x.Add(4)
 	x.Add(2)
-	assert.Equal(t, []uint64{2, 4}, x.Elems())
+	assert.Equal(t, []uint{2, 4}, x.Elems())
 }
 
 func TestUnionWith(t *testing.T) {

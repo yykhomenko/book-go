@@ -5,8 +5,11 @@ import (
 	"fmt"
 )
 
+// ex 6.5 N is number of uint bits on current platform
+const N = 32 << (^uint(0) >> 63)
+
 type IntSet struct {
-	words []uint64
+	words []uint
 }
 
 func (s *IntSet) String() string {
@@ -14,12 +17,12 @@ func (s *IntSet) String() string {
 	buf.WriteByte('{')
 	for i, word := range s.words {
 		if word != 0 {
-			for j := 0; j < 64; j++ {
+			for j := 0; j < N; j++ {
 				if word&(1<<uint(j)) != 0 {
 					if buf.Len() > len("}") {
 						buf.WriteByte(' ')
 					}
-					fmt.Fprintf(&buf, "%d", 64*i+j)
+					fmt.Fprintf(&buf, "%d", N*i+j)
 				}
 			}
 		}
@@ -29,12 +32,12 @@ func (s *IntSet) String() string {
 }
 
 func (s *IntSet) Has(x int) bool {
-	word, bit := x/64, uint(x%64)
+	word, bit := x/N, uint(x%N)
 	return word < len(s.words) && s.words[word]&(1<<bit) != 0
 }
 
 func (s *IntSet) Add(x int) {
-	word, bit := x/64, uint(x%64)
+	word, bit := x/N, uint(x%N)
 	for word >= len(s.words) {
 		s.words = append(s.words, 0)
 	}
@@ -50,13 +53,13 @@ func (s *IntSet) AddAll(vs ...int) {
 
 // ex 6.1
 func (s *IntSet) Remove(x int) {
-	word, bit := x/64, uint(x%64)
+	word, bit := x/N, uint(x%N)
 	s.words[word] &^= 1 << bit
 }
 
 // ex 6.1
 func (s *IntSet) Copy() *IntSet {
-	ws := make([]uint64, len(s.words), len(s.words))
+	ws := make([]uint, len(s.words), len(s.words))
 	copy(ws, s.words)
 	return &IntSet{ws}
 }
@@ -70,7 +73,7 @@ func (s *IntSet) Clear() {
 func (s *IntSet) Len() (sum int) {
 	for _, word := range s.words {
 		if word != 0 {
-			for j := 0; j < 64; j++ {
+			for j := 0; j < N; j++ {
 				if word&(1<<j) != 0 {
 					sum++
 				}
@@ -81,12 +84,12 @@ func (s *IntSet) Len() (sum int) {
 }
 
 // ex 6.4
-func (s *IntSet) Elems() (elems []uint64) {
+func (s *IntSet) Elems() (elems []uint) {
 	for i, word := range s.words {
 		if word != 0 {
-			for j := 0; j < 64; j++ {
+			for j := 0; j < N; j++ {
 				if word&(1<<uint(j)) != 0 {
-					elems = append(elems, uint64(64*i+j))
+					elems = append(elems, uint(N*i+j))
 				}
 			}
 		}
