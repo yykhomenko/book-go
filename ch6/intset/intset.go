@@ -55,11 +55,9 @@ func (s *IntSet) Remove(x int) {
 }
 
 func (s *IntSet) Copy() *IntSet {
-	cp := make([]uint64, len(s.words), len(s.words))
-	for i, v := range s.words {
-		cp[i] = v
-	}
-	return &IntSet{cp}
+	ws := make([]uint64, len(s.words), len(s.words))
+	copy(ws, s.words)
+	return &IntSet{ws}
 }
 
 func (s *IntSet) Clear() {
