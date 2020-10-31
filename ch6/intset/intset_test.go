@@ -94,9 +94,9 @@ func TestDifferenceWith(t *testing.T) {
 	y.Add(4)
 	y.Add(5)
 	z := x.Copy()
-	x.SymmetricDifferenceWith(&y)
+	x.DifferenceWith(&y)
 	assert.Equal(t, "{2 3}", x.String())
-	y.SymmetricDifferenceWith(z)
+	y.DifferenceWith(z)
 	assert.Equal(t, "{4 5}", x.String())
 }
 
