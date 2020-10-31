@@ -97,7 +97,7 @@ func TestDifferenceWith(t *testing.T) {
 	x.DifferenceWith(&y)
 	assert.Equal(t, "{2 3}", x.String())
 	y.DifferenceWith(z)
-	assert.Equal(t, "{4 5}", x.String())
+	assert.Equal(t, "{4 5}", y.String())
 }
 
 func TestSymmetricDifferenceWith(t *testing.T) {
