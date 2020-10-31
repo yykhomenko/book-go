@@ -7,16 +7,13 @@ type CWriter struct {
 	c int64
 }
 
-func (c *CWriter) Write(p []byte) (int, error) {
-	n, err := c.w.Write(p)
-	if err != nil {
-		return 0, err
-	}
+func (c *CWriter) Write(p []byte) (n int, err error) {
+	n, err = c.w.Write(p)
 	c.c += int64(n)
-	return n, nil
+	return
 }
 
 func CountingWriter(w io.Writer) (io.Writer, *int64) {
-	c := &CWriter{w: w}
+	c := &CWriter{w, 0}
 	return c, &c.c
 }
