@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestWordCounter_Write(t *testing.T) {
+func TestWordCounter(t *testing.T) {
 	var c WordCounter
 	const input = "Hello world 2020 5678"
 	c.Write([]byte(input))
