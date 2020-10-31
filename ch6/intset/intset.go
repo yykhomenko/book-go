@@ -41,27 +41,32 @@ func (s *IntSet) Add(x int) {
 	s.words[word] |= 1 << bit
 }
 
+// ex 6.2
 func (s *IntSet) AddAll(vs ...int) {
 	for _, v := range vs {
 		s.Add(v)
 	}
 }
 
+// ex 6.1
 func (s *IntSet) Remove(x int) {
 	word, bit := x/64, uint(x%64)
 	s.words[word] &^= 1 << bit
 }
 
+// ex 6.1
 func (s *IntSet) Copy() *IntSet {
 	ws := make([]uint64, len(s.words), len(s.words))
 	copy(ws, s.words)
 	return &IntSet{ws}
 }
 
+// ex 6.1
 func (s *IntSet) Clear() {
 	s.words = nil
 }
 
+// ex 6.1
 func (s *IntSet) Len() (sum int) {
 	for _, word := range s.words {
 		if word != 0 {
@@ -75,6 +80,7 @@ func (s *IntSet) Len() (sum int) {
 	return
 }
 
+// ex 6.4
 func (s *IntSet) Elems() (elems []uint64) {
 	for i, word := range s.words {
 		if word != 0 {
@@ -98,6 +104,7 @@ func (s *IntSet) UnionWith(t *IntSet) {
 	}
 }
 
+// ex 6.3
 func (s *IntSet) IntersectWith(t *IntSet) {
 	for i, tword := range t.words {
 		if i < len(s.words) {
@@ -108,6 +115,7 @@ func (s *IntSet) IntersectWith(t *IntSet) {
 	}
 }
 
+// ex 6.3
 func (s *IntSet) DifferenceWith(t *IntSet) {
 	for i, tword := range t.words {
 		if i < len(s.words) {
@@ -116,6 +124,7 @@ func (s *IntSet) DifferenceWith(t *IntSet) {
 	}
 }
 
+// ex 6.3
 func (s *IntSet) SymmetricDifferenceWith(t *IntSet) {
 	for i, tword := range t.words {
 		if i < len(s.words) {
