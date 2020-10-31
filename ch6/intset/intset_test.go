@@ -93,5 +93,5 @@ func TestDifferenceWith(t *testing.T) {
 	y.Add(300)
 	y.Add(400)
 	x.DifferenceWith(&y)
-	assert.Equal(t, "{32 200 300 400}", x.String())
+	assert.Equal(t, "{32 200 400}", x.String())
 }
