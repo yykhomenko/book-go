@@ -13,12 +13,54 @@ func TestAdd(t *testing.T) {
 	assert.Equal(t, "{2 4}", x.String())
 }
 
+func TestAddAll(t *testing.T) {
+	var x IntSet
+	x.Add(1)
+	x.Add(2)
+	x.AddAll(3, 4)
+	assert.True(t, x.Has(3))
+	assert.True(t, x.Has(4))
+}
+
 func TestHas(t *testing.T) {
 	x := IntSet{}
 	x.Add(4)
 	x.Add(2)
 	assert.True(t, x.Has(4))
 	assert.True(t, !x.Has(3))
+}
+
+func TestRemove(t *testing.T) {
+	x := IntSet{}
+	v := 4
+	x.Add(v)
+	x.Remove(v)
+	assert.False(t, x.Has(v))
+}
+
+func TestCopy(t *testing.T) {
+	var x IntSet
+	x.Add(1)
+	x.Add(2)
+	y := x.Copy()
+	assert.True(t, y.Has(1))
+	assert.True(t, y.Has(2))
+}
+
+func TestClear(t *testing.T) {
+	x := IntSet{}
+	x.Add(1)
+	x.Add(3)
+	x.Add(5)
+	x.Clear()
+	assert.Equal(t, 0, x.Len())
+}
+
+func TestLen(t *testing.T) {
+	x := IntSet{}
+	x.Add(4)
+	x.Add(2)
+	assert.Equal(t, 2, x.Len())
 }
 
 func TestUnionWith(t *testing.T) {
@@ -41,46 +83,4 @@ func TestIntersectWith(t *testing.T) {
 	y.Add(400)
 	x.IntersectWith(&y)
 	assert.Equal(t, "{300}", x.String())
-}
-
-func TestLen(t *testing.T) {
-	x := IntSet{}
-	x.Add(4)
-	x.Add(2)
-	assert.Equal(t, 2, x.Len())
-}
-
-func TestRemove(t *testing.T) {
-	x := IntSet{}
-	v := 4
-	x.Add(v)
-	x.Remove(v)
-	assert.False(t, x.Has(v))
-}
-
-func TestClear(t *testing.T) {
-	x := IntSet{}
-	x.Add(1)
-	x.Add(3)
-	x.Add(5)
-	x.Clear()
-	assert.Equal(t, 0, x.Len())
-}
-
-func TestCopy(t *testing.T) {
-	var x IntSet
-	x.Add(1)
-	x.Add(2)
-	y := x.Copy()
-	assert.True(t, y.Has(1))
-	assert.True(t, y.Has(2))
-}
-
-func TestAddAll(t *testing.T) {
-	var x IntSet
-	x.Add(1)
-	x.Add(2)
-	x.AddAll(3, 4)
-	assert.True(t, x.Has(3))
-	assert.True(t, x.Has(4))
 }
