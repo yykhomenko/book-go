@@ -9,8 +9,8 @@ type limitReader struct {
 
 func (r *limitReader) Read(p []byte) (n int, err error) {
 	switch {
-	case r.remain <= 0:
-		n, err = 0, io.EOF
+	case r.remain == 0:
+		return 0, io.EOF
 	case r.remain < int64(len(p)):
 		n, err = r.r.Read(p[:r.remain])
 		if err == nil {
