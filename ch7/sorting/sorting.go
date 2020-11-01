@@ -77,7 +77,19 @@ func main() {
 	fmt.Println()
 
 	sort.Sort(myCustomSort{tracks, func(x, y *Track) bool {
-		return x.Length > y.Length
+		if x.Title != y.Title {
+			return x.Title < y.Title
+		}
+
+		if x.Year != y.Year {
+			return x.Year < y.Year
+		}
+
+		if x.Length != y.Length {
+			return x.Length < y.Length
+		}
+
+		return false
 	}})
 	printTracks(tracks)
 }
