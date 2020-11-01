@@ -22,6 +22,12 @@ func (x byArtist) Len() int           { return len(x) }
 func (x byArtist) Less(i, j int) bool { return x[i].Artist < x[j].Artist }
 func (x byArtist) Swap(i, j int)      { x[i], x[j] = x[j], x[i] }
 
+type byYear []*Track
+
+func (x byYear) Len() int           { return len(x) }
+func (x byYear) Less(i, j int) bool { return x[i].Year < x[j].Year }
+func (x byYear) Swap(i, j int)      { x[i], x[j] = x[j], x[i] }
+
 var tracks = []*Track{
 	{"Go", "Delilah", "From the Roots Up", 2012, length("3m38s")},
 	{"Go", "Moby", "Moby", 1992, length("3m37s")},
@@ -51,7 +57,10 @@ func printTracks(tracks []*Track) {
 func main() {
 	sort.Sort(byArtist(tracks))
 	printTracks(tracks)
-	sort.Sort(sort.Reverse(byArtist(tracks)))
 	fmt.Println()
+	sort.Sort(sort.Reverse(byArtist(tracks)))
+	printTracks(tracks)
+	fmt.Println()
+	sort.Sort(sort.Reverse(byYear(tracks)))
 	printTracks(tracks)
 }
