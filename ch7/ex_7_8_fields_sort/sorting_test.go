@@ -12,8 +12,12 @@ func TestStateSorting(t *testing.T) {
 		{"Go Ahead", "Alicia Keys", "As I Am", 2007, length("4m36s")},
 		{"Ready 2 Go", "Martin Solveig", "Smash", 2011, length("4m24s")},
 	}
-	ss := stateSort{tracks, nil}
-	ss.By("Artist")
+	ss := fieldsSort{tracks, nil}
+	ss.AddBy("Artist", true)
+	ss.AddBy("Artist", true)
+	ss.AddBy("Album", true)
+	ss.AddBy("Year", true)
+	ss.AddBy("Title", true)
 	sort.Sort(ss)
 	ss.PrintTracks()
 }
