@@ -59,12 +59,10 @@ var tmpl = template.Must(template.New("list").Parse(`
 func (db *database) list(w http.ResponseWriter, r *http.Request) {
 	db.Lock()
 	defer db.Unlock()
-
-	tmpl.Execute(w, db.prices)
-
-	// for item, price := range db.prices {
-	// 	fmt.Fprintf(w, "%s: %s\n", item, price)
-	// }
+	if err := tmpl.Execute(w, db.prices); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "tmpl exec: %v/n", err)
+	}
 }
 
 func (db *database) price(w http.ResponseWriter, r *http.Request) {
