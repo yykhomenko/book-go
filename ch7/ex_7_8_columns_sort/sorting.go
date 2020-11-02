@@ -25,8 +25,8 @@ type ByColumns struct {
 	maxColumns int
 }
 
-func NewByColumns(p []*Track, maxColumns int) *ByColumns {
-	return &ByColumns{p, nil, maxColumns}
+func NewByColumns(tracks []*Track, maxColumns int) *ByColumns {
+	return &ByColumns{tracks, nil, maxColumns}
 }
 
 func (c *ByColumns) Len() int      { return len(c.tracks) }
