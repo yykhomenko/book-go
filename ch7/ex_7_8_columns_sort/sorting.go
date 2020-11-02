@@ -54,7 +54,7 @@ func (c *ByColumns) Select(cmp columnCmp) {
 	}
 }
 
-func length(s string) time.Duration {
+func Length(s string) time.Duration {
 	d, err := time.ParseDuration(s)
 	if err != nil {
 		panic(s)
