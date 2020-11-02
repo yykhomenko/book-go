@@ -45,10 +45,18 @@ func (db database) price(w http.ResponseWriter, r *http.Request) {
 func (db database) update(w http.ResponseWriter, r *http.Request) {
 	item := r.URL.Query().Get("item")
 	price, err := strconv.ParseFloat(r.URL.Query().Get("price"), 32)
+
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "unable to parse price: %v\n", err)
 		return
 	}
+
+	if _, ok := db[item]; !ok {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintf(w, "item not found: %q\n", item)
+		return
+	}
+
 	db[item] = dollars(price)
 }
