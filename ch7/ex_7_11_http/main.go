@@ -1,6 +1,7 @@
 // go run main.go
 // http://localhost:8000/list
 // http://localhost:8000/price?item=socks
+// http://localhost:8000/update?item=hat&price=10
 package main
 
 import (
