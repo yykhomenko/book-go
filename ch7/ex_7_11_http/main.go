@@ -1,7 +1,7 @@
 // go run main.go
 // http://localhost:8000/list
 // http://localhost:8000/price?item=socks
-// http://localhost:8000/crate?item=hat&price=10
+// http://localhost:8000/create?item=hat&price=10
 // http://localhost:8000/update?item=hat&price=15
 // http://localhost:8000/delete?item=hat
 package main
