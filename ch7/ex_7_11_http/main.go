@@ -23,17 +23,26 @@ type dollars float32
 
 func (d dollars) String() string { return fmt.Sprintf("$%.2f", d) }
 
-type database map[string]dollars
+type database struct {
+	prices map[string]dollars
+}
+
+func NewDatabase() *database {
+	db := &database{make(map[string]dollars)}
+	db.prices["shoes"] = 50
+	db.prices["socks"] = 5
+	return db
+}
 
 func (db database) list(w http.ResponseWriter, r *http.Request) {
-	for item, price := range db {
+	for item, price := range db.prices {
 		fmt.Fprintf(w, "%s: %s\n", item, price)
 	}
 }
 
 func (db database) price(w http.ResponseWriter, r *http.Request) {
 	item := r.URL.Query().Get("item")
-	price, ok := db[item]
+	price, ok := db.prices[item]
 	if !ok {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintf(w, "item not found: %q\n", item)
@@ -52,7 +61,7 @@ func (db database) update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, ok := db[item]; !ok {
+	if _, ok := db.prices[item]; !ok {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintf(w, "item not found: %q\n", item)
 		return
