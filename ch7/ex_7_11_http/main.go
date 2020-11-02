@@ -1,7 +1,9 @@
 // go run main.go
 // http://localhost:8000/list
 // http://localhost:8000/price?item=socks
-// http://localhost:8000/update?item=hat&price=10
+// http://localhost:8000/crate?item=hat&price=10
+// http://localhost:8000/update?item=hat&price=15
+// http://localhost:8000/delete?item=hat
 package main
 
 import (
@@ -18,6 +20,7 @@ func main() {
 	http.HandleFunc("/price", db.price)
 	http.HandleFunc("/create", db.create)
 	http.HandleFunc("/update", db.update)
+	http.HandleFunc("/delete", db.delete)
 	log.Fatal(http.ListenAndServe("localhost:8000", nil))
 }
 
@@ -37,6 +40,7 @@ func NewDatabase(prices map[string]dollars) *database {
 func (db *database) list(w http.ResponseWriter, r *http.Request) {
 	db.Lock()
 	defer db.Unlock()
+
 	for item, price := range db.prices {
 		fmt.Fprintf(w, "%s: %s\n", item, price)
 	}
@@ -44,14 +48,17 @@ func (db *database) list(w http.ResponseWriter, r *http.Request) {
 
 func (db *database) price(w http.ResponseWriter, r *http.Request) {
 	item := r.URL.Query().Get("item")
+
 	db.Lock()
 	defer db.Unlock()
+
 	price, ok := db.prices[item]
 	if !ok {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintf(w, "item not found: %q\n", item)
 		return
 	}
+
 	fmt.Fprintf(w, "%s\n", price)
 }
 
@@ -73,6 +80,7 @@ func (db *database) create(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "item already present: %q\n", item)
 		return
 	}
+
 	db.prices[item] = dollars(price)
 }
 
@@ -94,5 +102,21 @@ func (db *database) update(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "item not found: %q\n", item)
 		return
 	}
+
 	db.prices[item] = dollars(price)
+}
+
+func (db *database) delete(w http.ResponseWriter, r *http.Request) {
+	item := r.URL.Query().Get("item")
+
+	db.Lock()
+	defer db.Unlock()
+
+	if _, ok := db.prices[item]; !ok {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintf(w, "item not found: %q\n", item)
+		return
+	}
+
+	delete(db.prices, item)
 }
