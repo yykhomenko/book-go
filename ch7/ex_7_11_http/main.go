@@ -9,10 +9,11 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"sync"
 )
 
 func main() {
-	db := database{"shoes": 50, "socks": 5}
+	db := NewDatabase(map[string]dollars{"shoes": 50, "socks": 5})
 	http.HandleFunc("/list", db.list)
 	http.HandleFunc("/price", db.price)
 	http.HandleFunc("/update", db.update)
@@ -24,23 +25,21 @@ type dollars float32
 func (d dollars) String() string { return fmt.Sprintf("$%.2f", d) }
 
 type database struct {
+	sync.Mutex
 	prices map[string]dollars
 }
 
-func NewDatabase() *database {
-	db := &database{make(map[string]dollars)}
-	db.prices["shoes"] = 50
-	db.prices["socks"] = 5
-	return db
+func NewDatabase(prices map[string]dollars) *database {
+	return &database{prices: prices}
 }
 
-func (db database) list(w http.ResponseWriter, r *http.Request) {
+func (db *database) list(w http.ResponseWriter, r *http.Request) {
 	for item, price := range db.prices {
 		fmt.Fprintf(w, "%s: %s\n", item, price)
 	}
 }
 
-func (db database) price(w http.ResponseWriter, r *http.Request) {
+func (db *database) price(w http.ResponseWriter, r *http.Request) {
 	item := r.URL.Query().Get("item")
 	price, ok := db.prices[item]
 	if !ok {
@@ -51,7 +50,7 @@ func (db database) price(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "%s\n", price)
 }
 
-func (db database) update(w http.ResponseWriter, r *http.Request) {
+func (db *database) update(w http.ResponseWriter, r *http.Request) {
 	item := r.URL.Query().Get("item")
 	price, err := strconv.ParseFloat(r.URL.Query().Get("price"), 32)
 
@@ -61,11 +60,13 @@ func (db database) update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	db.Lock()
+	defer db.Unlock()
+
 	if _, ok := db.prices[item]; !ok {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintf(w, "item not found: %q\n", item)
 		return
 	}
-
-	db[item] = dollars(price)
+	db.prices[item] = dollars(price)
 }
