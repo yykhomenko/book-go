@@ -1,3 +1,6 @@
+// go run main.go
+// http://localhost:8000/tracks
+// http://localhost:8000/tracks?sort=Title
 package main
 
 import (
