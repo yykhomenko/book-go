@@ -3,6 +3,7 @@ package eval
 type Expr interface {
 	Eval(env Env) float64          // Eval returns value of Expr in environment env.
 	Check(vars map[Var]bool) error // Check report about errors in Expr and add self Vars.
+	String() string
 }
 
 // Env contains values of Var
