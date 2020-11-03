@@ -24,7 +24,8 @@ func main() {
 		}
 
 		env := eval.Env{}
-		for _, v := range eval.Filter(expr, eval.FilterVars) {
+		vars := eval.Filter(expr, eval.FilterVars)
+		for _, v := range vars {
 			value, err := strconv.ParseFloat(r.URL.Query().Get(v.String()), 64)
 			if err != nil {
 				http.Error(w, fmt.Sprintf("parse param %q: %v", v, err), http.StatusBadRequest)
