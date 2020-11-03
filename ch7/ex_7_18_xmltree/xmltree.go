@@ -36,9 +36,9 @@ func visit(n Node, w io.Writer, depth int) {
 					b.WriteRune(' ')
 				}
 				b.WriteString(attr.Name.Local)
-				b.WriteString("=\"")
+				b.WriteString(`="`)
 				b.WriteString(attr.Value)
-				b.WriteString("\"")
+				b.WriteRune('"')
 			}
 			b.WriteRune(')')
 		}
