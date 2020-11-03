@@ -6,15 +6,15 @@ func Filter(e Expr, f func(Expr) bool) (out []Expr) {
 	if f != nil && f(e) {
 		out = append(out, e)
 	}
-	switch e.(type) {
+	switch e := e.(type) {
 	case Var, literal:
 	case Unary:
-		out = append(out, Filter(e.(Unary).x, f)...)
+		out = append(out, Filter(e.x, f)...)
 	case Binary:
-		out = append(out, Filter(e.(Binary).x, f)...)
-		out = append(out, Filter(e.(Binary).y, f)...)
+		out = append(out, Filter(e.x, f)...)
+		out = append(out, Filter(e.y, f)...)
 	case Call:
-		for _, arg := range e.(Call).args {
+		for _, arg := range e.args {
 			out = append(out, Filter(arg, f)...)
 		}
 	default:
