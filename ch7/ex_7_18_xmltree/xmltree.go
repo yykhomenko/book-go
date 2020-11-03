@@ -70,12 +70,12 @@ func XMLTree(r io.Reader) (root Node, _ error) {
 				parent := stack[len(stack)-1]
 				parent.Children = append(parent.Children, el)
 			}
-			stack = append(stack, el)
-		case xml.EndElement:
-			stack = stack[:len(stack)-1]
+			stack = append(stack, el) // push
 		case xml.CharData:
 			parent := stack[len(stack)-1]
 			parent.Children = append(parent.Children, CharData(tok))
+		case xml.EndElement:
+			stack = stack[:len(stack)-1] // pop
 		}
 	}
 	return
