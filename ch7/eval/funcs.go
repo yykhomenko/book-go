@@ -24,10 +24,6 @@ func Filter(e Expr, f func(Expr) bool) (out []Expr) {
 }
 
 var FilterVars = func(expr Expr) bool {
-	switch expr.(type) {
-	case Var:
-		return true
-	default:
-		return false
-	}
+	_, ok := expr.(Var)
+	return ok
 }
