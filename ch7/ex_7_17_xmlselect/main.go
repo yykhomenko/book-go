@@ -1,4 +1,4 @@
-// curl -s https://www.w3.org/TR/2006/RECxmlll20060816 | go run main.go div div h2
+// curl -s https://www.w3.org/TR/2006/RECxmlll20060816 | go run main.go div h2
 package main
 
 import (
