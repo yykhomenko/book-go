@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	eval "github.com/yykhomenko/book-gopl/ch7/ex_7_13"
+	"github.com/yykhomenko/book-gopl/ch7/eval"
 )
 
 func main() {
