@@ -20,6 +20,7 @@ func TestEval(t *testing.T) {
 		{"5 / 9 * (F - 32)", Env{"F": 212}, "100"},
 		{"-1 + -x", Env{"x": 1}, "-2"},
 		{"-1 - x", Env{"x": 1}, "-2"},
+		{"<2, 1, 4>", Env{}, "1"},
 	}
 	var prevExpr string
 	for _, test := range tests {
