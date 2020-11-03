@@ -14,16 +14,16 @@ func (l literal) Check(vars map[Var]bool) error {
 	return nil
 }
 
-func (u unary) Check(vars map[Var]bool) error {
+func (u Unary) Check(vars map[Var]bool) error {
 	if !strings.ContainsRune("+-", u.op) {
-		return fmt.Errorf("incorrect unary operator: %q", u.op)
+		return fmt.Errorf("incorrect Unary operator: %q", u.op)
 	}
 	return u.x.Check(vars)
 }
 
-func (b binary) Check(vars map[Var]bool) error {
+func (b Binary) Check(vars map[Var]bool) error {
 	if !strings.ContainsRune("+-*/", b.op) {
-		return fmt.Errorf("incorrect binary operator: %q", b.op)
+		return fmt.Errorf("incorrect Binary operator: %q", b.op)
 	}
 	if err := b.x.Check(vars); err != nil {
 		return err
@@ -33,14 +33,14 @@ func (b binary) Check(vars map[Var]bool) error {
 
 var numParams = map[string]int{"pow": 2, "sin": 1, "sqrt": 1}
 
-func (c call) Check(vars map[Var]bool) error {
+func (c Call) Check(vars map[Var]bool) error {
 	arity, ok := numParams[c.fn]
 	if !ok {
 		return fmt.Errorf("unknown func %q", c.fn)
 	}
 
 	if len(c.args) != arity {
-		return fmt.Errorf("call %s has %d instead %d agruments",
+		return fmt.Errorf("Call %s has %d instead %d agruments",
 			c.fn, len(c.args), arity)
 	}
 

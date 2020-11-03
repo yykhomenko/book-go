@@ -52,9 +52,9 @@ func precedence(op rune) int {
 //
 //   expr = num                         a literal number, e.g., 3.14159
 //        | id                          a variable name, e.g., x
-//        | id '(' expr ',' ... ')'     a function call
-//        | '-' expr                    a unary operator (+-)
-//        | expr '+' expr               a binary operator (+-*/)
+//        | id '(' expr ',' ... ')'     a function Call
+//        | '-' expr                    a Unary operator (+-)
+//        | expr '+' expr               a Binary operator (+-*/)
 //
 func Parse(input string) (_ Expr, err error) {
 	defer func() {
@@ -81,7 +81,7 @@ func Parse(input string) (_ Expr, err error) {
 
 func parseExpr(lex *lexer) Expr { return parseBinary(lex, 1) }
 
-// binary = unary ('+' binary)*
+// Binary = Unary ('+' Binary)*
 // parseBinary stops when it encounters an
 // operator of lower precedence than prec1.
 func parseBinary(lex *lexer, prec1 int) Expr {
@@ -91,18 +91,18 @@ func parseBinary(lex *lexer, prec1 int) Expr {
 			op := lex.token
 			lex.next() // consume operator
 			rhs := parseBinary(lex, prec+1)
-			lhs = binary{op, lhs, rhs}
+			lhs = Binary{op, lhs, rhs}
 		}
 	}
 	return lhs
 }
 
-// unary = '+' expr | primary
+// Unary = '+' expr | primary
 func parseUnary(lex *lexer) Expr {
 	if lex.token == '+' || lex.token == '-' {
 		op := lex.token
 		lex.next() // consume '+' or '-'
-		return unary{op, parseUnary(lex)}
+		return Unary{op, parseUnary(lex)}
 	}
 	return parsePrimary(lex)
 }
@@ -135,7 +135,7 @@ func parsePrimary(lex *lexer) Expr {
 			}
 		}
 		lex.next() // consume ')'
-		return call{id, args}
+		return Call{id, args}
 
 	case scanner.Int, scanner.Float:
 		f, err := strconv.ParseFloat(lex.text(), 64)

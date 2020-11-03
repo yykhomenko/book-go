@@ -13,18 +13,18 @@ func (l literal) Eval(_ Env) float64 {
 	return float64(l)
 }
 
-func (u unary) Eval(env Env) float64 {
+func (u Unary) Eval(env Env) float64 {
 	switch u.op {
 	case '+':
 		return +u.x.Eval(env)
 	case '-':
 		return -u.x.Eval(env)
 	default:
-		panic(fmt.Sprintf("unsupported unary operator: %q", u.op))
+		panic(fmt.Sprintf("unsupported Unary operator: %q", u.op))
 	}
 }
 
-func (b binary) Eval(env Env) float64 {
+func (b Binary) Eval(env Env) float64 {
 	switch b.op {
 	case '+':
 		return b.x.Eval(env) + b.y.Eval(env)
@@ -35,11 +35,11 @@ func (b binary) Eval(env Env) float64 {
 	case '/':
 		return b.x.Eval(env) / b.y.Eval(env)
 	default:
-		panic(fmt.Sprintf("unsupported binary operator: %q", b.op))
+		panic(fmt.Sprintf("unsupported Binary operator: %q", b.op))
 	}
 }
 
-func (c call) Eval(env Env) float64 {
+func (c Call) Eval(env Env) float64 {
 	switch c.fn {
 	case "pow":
 		return math.Pow(c.args[0].Eval(env), c.args[1].Eval(env))
@@ -48,6 +48,6 @@ func (c call) Eval(env Env) float64 {
 	case "sqrt":
 		return math.Sqrt(c.args[0].Eval(env))
 	default:
-		panic(fmt.Sprintf("unsupported function call: %q", c.fn))
+		panic(fmt.Sprintf("unsupported function Call: %q", c.fn))
 	}
 }

@@ -13,22 +13,22 @@ func (l literal) String() string {
 	return fmt.Sprintf("%g", l)
 }
 
-func (u unary) String() string {
+func (u Unary) String() string {
 	return string(u.op) + u.x.String()
 }
 
-func (b binary) String() string {
+func (b Binary) String() string {
 	switch b.op {
 	case '+', '-':
 		return fmt.Sprintf("%s %s %s", b.x.String(), string(b.op), b.y.String())
 	case '*', '/':
 		return fmt.Sprintf("%s%s%s", b.x.String(), string(b.op), b.y.String())
 	default:
-		panic(fmt.Sprintf("unsupported binary operator: %q", b.op))
+		panic(fmt.Sprintf("unsupported Binary operator: %q", b.op))
 	}
 }
 
-func (c call) String() string {
+func (c Call) String() string {
 	var b bytes.Buffer
 	b.WriteString(c.fn)
 	b.WriteRune('(')
