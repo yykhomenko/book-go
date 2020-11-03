@@ -33,7 +33,7 @@ type call struct {
 	args []Expr
 }
 
-// call represents expression function invocation, for example six(x).
+// min returns minimal one of sequence <a1, a2, ...aN>, for example <1, 2, 3>.
 type min struct {
 	args []Expr
 }
