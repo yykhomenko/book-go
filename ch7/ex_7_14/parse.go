@@ -111,6 +111,7 @@ func parseUnary(lex *lexer) Expr {
 //         | id '(' expr ',' ... ',' expr ')'
 //         | num
 //         | '(' expr ')'
+//         | '<' expr ',' ... ',' expr '>'
 func parsePrimary(lex *lexer) Expr {
 	switch lex.token {
 	case scanner.Ident:
