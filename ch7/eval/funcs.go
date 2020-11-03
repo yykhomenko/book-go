@@ -9,15 +9,12 @@ func Filter(e Expr, f func(Expr) bool) (out []Expr) {
 	switch e.(type) {
 	case Var, literal:
 	case Unary:
-		exp := e.(Unary)
-		out = append(out, Filter(exp.x, f)...)
+		out = append(out, Filter(e.(Unary).x, f)...)
 	case Binary:
-		exp := e.(Binary)
-		out = append(out, Filter(exp.x, f)...)
-		out = append(out, Filter(exp.y, f)...)
+		out = append(out, Filter(e.(Binary).x, f)...)
+		out = append(out, Filter(e.(Binary).y, f)...)
 	case Call:
-		exp := e.(Call)
-		for _, arg := range exp.args {
+		for _, arg := range e.(Call).args {
 			out = append(out, Filter(arg, f)...)
 		}
 	default:
