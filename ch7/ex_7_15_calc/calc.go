@@ -10,12 +10,12 @@ import (
 )
 
 func main() {
-	sc := bufio.NewScanner(os.Stdin)
-	sc.Scan()
-	if sc.Err() != nil {
-		log.Fatalf("input: %v", sc.Err())
+	s := bufio.NewScanner(os.Stdin)
+	if s.Scan(); s.Err() != nil {
+		log.Fatalf("input: %v", s.Err())
 	}
-	e, err := eval.Parse(sc.Text())
+
+	e, err := eval.Parse(s.Text())
 	if err != nil {
 		log.Fatalf("parse: %v", err)
 	}
