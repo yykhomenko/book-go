@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"net"
-	"strings"
+
+	"github.com/yykhomenko/book-gopl/ch8/ex_8_2_ftp_server/ftp"
 )
 
 func main() {
@@ -25,25 +27,19 @@ func main() {
 
 func handle(conn net.Conn) {
 	defer conn.Close()
-	for {
-		var buf []byte
-		conn.Read(buf)
-		cmd := NewCmd(string(buf))
-		fmt.Fprintf(conn, "%v", cmd)
-	}
-}
+	sc := bufio.NewScanner(conn)
+	for sc.Scan() {
+		if sc.Err() != nil {
+			log.Printf("scan: %v", sc.Err())
+		}
+		cmd := ftp.NewCmd(sc.Text())
+		log.Printf("CMD %s", cmd)
 
-type Cmd struct {
-	cmd  string
-	args []string
-}
-
-func NewCmd(line string) *Cmd {
-	words := strings.Split(line, " ")
-	cmd := strings.TrimSpace(words[0])
-	args := words[1:]
-	for i, arg := range args {
-		args[i] = strings.TrimSpace(arg)
+		out, err := cmd.Exec()
+		if err != nil {
+			fmt.Fprintf(conn, "%s\n200 ОК\n", out)
+		} else {
+			fmt.Fprintf(conn, "%s\n500\n", err)
+		}
 	}
-	return &Cmd{cmd, args}
 }
