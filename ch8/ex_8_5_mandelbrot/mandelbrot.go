@@ -7,26 +7,46 @@ import (
 	"image/color"
 	"image/png"
 	"os"
+	"runtime"
+	"sync"
+)
+
+const (
+	xmin, ymin, xmax, ymax = -2, -2, +2, +2
+	width, heigth          = 10000, 10000
 )
 
 func main() {
-	const (
-		xmin, ymin, xmax, ymax = -2, -2, +2, +2
-		width, heigth          = 1024, 1024
-	)
-
 	img := image.NewRGBA(image.Rect(0, 0, width, heigth))
+	rows := make(chan int)
+	go generate(rows, heigth)
 
-	for py := 0; py < heigth; py++ {
-		y := float64(py)/heigth*(ymax-ymin) + ymin
-		for px := 0; px < width; px++ {
-			x := float64(px)/width*(xmax-xmin) + xmin
-			z := complex(x, y)
-			img.Set(px, py, mandelbrot(z))
-		}
+	wg := &sync.WaitGroup{}
+	for i := 0; i < runtime.GOMAXPROCS(-1); i++ {
+		wg.Add(1)
+		go setRows(img, wg, rows)
 	}
+	wg.Wait()
 
 	png.Encode(os.Stdout, img)
+}
+
+func generate(rows chan<- int, n int) {
+	defer close(rows)
+	for row := 0; row < n; row++ {
+		rows <- row
+	}
+}
+
+func setRows(img *image.RGBA, wg *sync.WaitGroup, rows <-chan int) {
+	for row := range rows {
+		y := float64(row)/heigth*(ymax-ymin) + ymin
+		for col := 0; col < width; col++ {
+			x := float64(col)/width*(xmax-xmin) + xmin
+			img.Set(col, row, mandelbrot(complex(x, y)))
+		}
+	}
+	wg.Done()
 }
 
 func mandelbrot(z complex128) color.Color {
