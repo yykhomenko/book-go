@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os/exec"
 	"strings"
 )
 
@@ -39,7 +40,7 @@ func (c *conn) run() {
 	s := bufio.NewScanner(c.rw)
 
 	var cmd string
-	// var args []string
+	var args []string
 	for s.Scan() {
 		if s.Err() != nil {
 			log.Printf("scan: %v", s.Err())
@@ -54,15 +55,19 @@ func (c *conn) run() {
 		}
 
 		cmd = strings.ToUpper(fields[0])
-		// args = fields[1:]
+		args = fields[1:]
 
 		fmt.Println(cmd)
 		switch cmd {
-		case "QUIT":
+		case "CD":
+			c.cd(args)
+		case "LS":
+			_ = args
+		case "GET":
+			_ = args
+		case "CLOSE":
 			c.writeln("221 Goodbye.")
 			return
-		case "USER":
-			c.writeln("230 Login successful.")
 		default:
 			c.writeln(fmt.Sprintf("502 Command %q not implemented.", cmd))
 		}
@@ -75,4 +80,12 @@ func (c *conn) writeln(s ...interface{}) {
 	}
 	s = append(s, "\r\n")
 	_, c.cmdErr = fmt.Fprint(c.rw, s...)
+}
+
+func (c *conn) cd(args []string) {
+	cmd := exec.Command("cd", args[0])
+	if err := cmd.Run(); err != nil {
+		log.Print(err)
+	}
+	c.writeln("200 OK")
 }
