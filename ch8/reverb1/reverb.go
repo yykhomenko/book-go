@@ -1,8 +1,9 @@
-package reverb
+package main
 
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"net"
 	"strings"
 	"time"
@@ -21,5 +22,20 @@ func handleConn(c net.Conn) {
 	input := bufio.NewScanner(c)
 	for input.Scan() {
 		echo(c, input.Text(), 1*time.Second)
+	}
+}
+
+func main() {
+	l, err := net.Listen("tcp", "localhost:8000")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for {
+		conn, err := l.Accept()
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		handleConn(conn)
 	}
 }
