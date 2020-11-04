@@ -35,7 +35,7 @@ func NewConn(c net.Conn) *conn {
 
 func (c *conn) run() {
 	defer c.rw.Close()
-	// c.writeln("220 Ready.")
+	c.writeln("220 Ready.")
 	s := bufio.NewScanner(c.rw)
 
 	var cmd string
