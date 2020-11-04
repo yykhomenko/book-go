@@ -8,7 +8,12 @@ import (
 )
 
 func main() {
-	conn, err := net.Dial("tcp", "localhost:8000")
+	addr, err := net.ResolveTCPAddr("tcp", "localhost:8000")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	conn, err := net.DialTCP("tcp", nil, addr)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -21,16 +26,16 @@ func main() {
 	}()
 
 	mustCopy(conn, os.Stdin)
-	if c, ok := conn.(*net.TCPConn); ok {
-		c.CloseWrite()
-	} else {
-		conn.Close()
-	}
+	conn.CloseWrite()
+
 	<-done
 }
 
 func mustCopy(dst io.Writer, src io.Reader) {
 	if _, err := io.Copy(dst, src); err != nil {
+		if err == io.EOF {
+			return
+		}
 		log.Fatal(err)
 	}
 }
