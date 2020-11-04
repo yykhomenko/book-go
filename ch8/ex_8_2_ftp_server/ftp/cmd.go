@@ -1,14 +1,17 @@
 package ftp
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 type Cmd struct {
-	cmd  string
-	args []string
+	Name string
+	Args []string
 }
 
 func (cmd *Cmd) Exec() (string, error) {
-	return "exec", nil
+	return fmt.Sprintf("exec %s(%s)", cmd.Name, strings.Join(cmd.Args, ", ")), nil
 }
 
 func NewCmd(line string) *Cmd {

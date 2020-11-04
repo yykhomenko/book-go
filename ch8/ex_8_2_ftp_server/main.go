@@ -22,7 +22,6 @@ func main() {
 		}
 		go handle(conn)
 	}
-
 }
 
 func handle(conn net.Conn) {
@@ -31,15 +30,20 @@ func handle(conn net.Conn) {
 	for sc.Scan() {
 		if sc.Err() != nil {
 			log.Printf("scan: %v", sc.Err())
+			continue
 		}
+
 		cmd := ftp.NewCmd(sc.Text())
+		if cmd.Name == "" {
+			continue
+		}
 		log.Printf("CMD %s", cmd)
 
 		out, err := cmd.Exec()
 		if err != nil {
-			fmt.Fprintf(conn, "%s\n200 ОК\n", out)
-		} else {
 			fmt.Fprintf(conn, "%s\n500\n", err)
+		} else {
+			fmt.Fprintf(conn, "%s\n200 ОК\n", out)
 		}
 	}
 }
