@@ -1,10 +1,10 @@
 package main
 
 import (
-	"io"
+	"fmt"
 	"log"
 	"net"
-	"os"
+	"strings"
 )
 
 func main() {
@@ -25,7 +25,25 @@ func main() {
 
 func handle(conn net.Conn) {
 	defer conn.Close()
-	if _, err := io.Copy(os.Stdout, conn); err != nil {
-		log.Fatal(err)
+	for {
+		var buf []byte
+		conn.Read(buf)
+		cmd := NewCmd(string(buf))
+		fmt.Fprintf(conn, "%v", cmd)
 	}
+}
+
+type Cmd struct {
+	cmd  string
+	args []string
+}
+
+func NewCmd(line string) *Cmd {
+	words := strings.Split(line, " ")
+	cmd := strings.TrimSpace(words[0])
+	args := words[1:]
+	for i, arg := range args {
+		args[i] = strings.TrimSpace(arg)
+	}
+	return &Cmd{cmd, args}
 }
