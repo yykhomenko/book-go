@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-
-	"github.com/yykhomenko/book-gopl/ch8/ex_8_2_ftp_server/ftp"
 )
 
 func main() {
@@ -18,22 +16,31 @@ func main() {
 	for {
 		conn, err := cmd.Accept()
 		if err != nil {
+			log.Println(err)
 			continue
 		}
-		go handle(conn)
+		go NewConn(conn).run()
 	}
 }
 
-func handle(conn net.Conn) {
-	defer conn.Close()
-	sc := bufio.NewScanner(conn)
+type conn struct {
+	rw net.Conn
+}
+
+func NewConn(c net.Conn) *conn {
+	return &conn{c}
+}
+
+func (c conn) run() {
+	defer c.rw.Close()
+	sc := bufio.NewScanner(c.rw)
 	for sc.Scan() {
 		if sc.Err() != nil {
 			log.Printf("scan: %v", sc.Err())
 			continue
 		}
 
-		cmd := ftp.NewCmd(sc.Text())
+		cmd := NewCmd(sc.Text())
 		if cmd.Name == "" {
 			continue
 		}
@@ -43,7 +50,10 @@ func handle(conn net.Conn) {
 		if err != nil {
 			fmt.Fprintf(conn, "%s\n500\n", err)
 		} else {
-			fmt.Fprintf(conn, "%s\n200 ОК\n", out)
+			fmt.Fprintf(conn, "%s\n220 ОК\n", out)
 		}
 	}
+}
+
+func exec() {
 }
