@@ -9,7 +9,7 @@ func main() {
 	go spinner(100 * time.Millisecond)
 	const n = 45
 	fibN := fib(n)
-	fmt.Printf("\rFibonachi(%d) = %d\n", fibN, n)
+	fmt.Printf("\rFibonachi(%d) = %d\n", n, fibN)
 }
 
 func spinner(delay time.Duration) {
