@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strings"
 )
 
 func main() {
-	cmd, err := net.Listen("tcp", ":21")
+	cmd, err := net.Listen("tcp4", ":21")
 	if err != nil {
 		log.Fatal()
 	}
@@ -24,36 +25,54 @@ func main() {
 }
 
 type conn struct {
-	rw net.Conn
+	rw     net.Conn
+	cmdErr error
 }
 
 func NewConn(c net.Conn) *conn {
-	return &conn{c}
+	return &conn{c, nil}
 }
 
-func (c conn) run() {
+func (c *conn) run() {
 	defer c.rw.Close()
-	sc := bufio.NewScanner(c.rw)
-	for sc.Scan() {
-		if sc.Err() != nil {
-			log.Printf("scan: %v", sc.Err())
+	// c.writeln("220 Ready.")
+	s := bufio.NewScanner(c.rw)
+
+	var cmd string
+	// var args []string
+	for s.Scan() {
+		if s.Err() != nil {
+			log.Printf("scan: %v", s.Err())
 			continue
 		}
-
-		cmd := NewCmd(sc.Text())
-		if cmd.Name == "" {
+		fields := strings.Split(s.Text(), " ")
+		if len(fields) == 0 {
 			continue
 		}
-		log.Printf("CMD %s", cmd)
+		for i, field := range fields {
+			fields[i] = strings.TrimSpace(field)
+		}
 
-		out, err := cmd.Exec()
-		if err != nil {
-			fmt.Fprintf(conn, "%s\n500\n", err)
-		} else {
-			fmt.Fprintf(conn, "%s\n220 ОК\n", out)
+		cmd = strings.ToUpper(fields[0])
+		// args = fields[1:]
+
+		fmt.Println(cmd)
+		switch cmd {
+		case "QUIT":
+			c.writeln("221 Goodbye.")
+			return
+		case "USER":
+			c.writeln("230 Login successful.")
+		default:
+			c.writeln(fmt.Sprintf("502 Command %q not implemented.", cmd))
 		}
 	}
 }
 
-func exec() {
+func (c *conn) writeln(s ...interface{}) {
+	if c.cmdErr != nil {
+		return
+	}
+	s = append(s, "\r\n")
+	_, c.cmdErr = fmt.Fprint(c.rw, s...)
 }
