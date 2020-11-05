@@ -1,4 +1,4 @@
-// go run crawl.go -depth 2 https://golang.org
+// go run mirror.go -depth 2 https://golang.org
 package main
 
 import (
