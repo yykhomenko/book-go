@@ -39,6 +39,7 @@ func generate(rows chan<- int, n int) {
 }
 
 func setRows(img *image.RGBA, wg *sync.WaitGroup, rows <-chan int) {
+	defer wg.Done()
 	for row := range rows {
 		y := float64(row)/heigth*(ymax-ymin) + ymin
 		for col := 0; col < width; col++ {
@@ -46,7 +47,6 @@ func setRows(img *image.RGBA, wg *sync.WaitGroup, rows <-chan int) {
 			img.Set(col, row, mandelbrot(complex(x, y)))
 		}
 	}
-	wg.Done()
 }
 
 func mandelbrot(z complex128) color.Color {
