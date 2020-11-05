@@ -4,13 +4,15 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io"
 	"log"
 	"math"
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strings"
+
+	"golang.org/x/net/html"
 
 	"github.com/yykhomenko/book-gopl/ch5/links"
 	"github.com/yykhomenko/book-gopl/ch8/search"
@@ -25,6 +27,7 @@ func main() {
 
 	for _, link := range flag.Args() {
 		search.DLS(link, *depth, *par, seen, func(url string) []string {
+
 			name, err := download(url)
 			if err != nil {
 				log.Printf("unable to download %s: %v", url, err)
@@ -54,28 +57,54 @@ func crawl(url string) []string {
 	return urls
 }
 
-func download(link string) (filename string, err error) {
-	resp, err := http.Get(link)
+func download(uri string) (filename string, err error) {
+	resp, err := http.Get(uri)
 	if err != nil {
 		return "", err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("get %s: %v", link, resp.Status)
+		return "", fmt.Errorf("get %s: %v", uri, resp.Status)
 	}
 
-	u, err := url.Parse(link)
+	link, err := url.Parse(uri)
 	if err != nil {
 		return "", err
 	}
 
-	path := strings.Join(strings.Split(u.Host+u.Path, "/"), string(os.PathSeparator))
-	filename = path + string(os.PathSeparator) + "index.html"
+	filename = filepath.Join(link.Host, link.Path)
+	if filepath.Ext(link.Path) == "" {
+		filename = filepath.Join(link.Host, link.Path, "index.html")
+	}
 
-	if err := os.MkdirAll(path, os.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Dir(filename), os.ModePerm); err != nil {
 		return filename, err
 	}
+
+	doc, err := html.Parse(resp.Body)
+	if err != nil {
+		log.Print(err)
+	}
+
+	forAll(doc, func(n *html.Node) {
+		if n.Type == html.ElementNode && n.Data == "a" {
+			for i, a := range n.Attr {
+				if a.Key == "href" {
+					if u, err := link.Parse(a.Val); err == nil {
+						if u.Host == link.Host {
+							u.Scheme = ""
+							u.Host = ""
+							u.User = nil
+							u.Path = strings.TrimPrefix(u.Path+"index.html", "/")
+							a.Val = u.String()
+							n.Attr[i] = a
+						}
+					}
+				}
+			}
+		}
+	})
 
 	file, err := os.Create(filename)
 	if err != nil {
@@ -83,10 +112,16 @@ func download(link string) (filename string, err error) {
 	}
 	defer file.Close()
 
-	_, err = io.Copy(file, resp.Body)
-	if err != nil {
-		return "", err
+	if err := html.Render(file, doc); err != nil {
+		return "", nil
 	}
 
 	return filename, nil
+}
+
+func forAll(n *html.Node, f func(n *html.Node)) {
+	f(n)
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		forAll(c, f)
+	}
 }
