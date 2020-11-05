@@ -20,6 +20,7 @@ func main() {
 	flag.Parse()
 	wg := &sync.WaitGroup{}
 	for _, arg := range flag.Args() {
+		wg.Add(1)
 		crawlDeep(arg, *depth, wg)
 	}
 	wg.Wait()
@@ -41,10 +42,14 @@ func crawlDeep(url string, depth int, wg *sync.WaitGroup) {
 	}
 
 	for _, link := range foundLinks {
-		if !seen[link] {
-			seen[link] = true
-			wg.Add(1)
-			go crawlDeep(link, depth-1, wg)
+		seenMu.Lock()
+		if seen[link] {
+			seenMu.Unlock()
+			continue
 		}
+		seen[link] = true
+		seenMu.Unlock()
+		wg.Add(1)
+		go crawlDeep(link, depth-1, wg)
 	}
 }
