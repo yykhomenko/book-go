@@ -29,7 +29,7 @@ func main() {
 			if err != nil {
 				log.Printf("unable to download %s: %v", url, err)
 			}
-			log.Printf("save %s", name)
+			log.Printf("downloaded %s", name)
 			return filterByPrefixes(crawl(url), flag.Args())
 		})
 	}
