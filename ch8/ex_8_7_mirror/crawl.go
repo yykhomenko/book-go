@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"strings"
 
 	"github.com/yykhomenko/book-gopl/ch5/links"
 	"github.com/yykhomenko/book-gopl/ch8/search"
@@ -20,12 +21,28 @@ func main() {
 
 	for _, link := range flag.Args() {
 		search.DLS(link, *depth, *par, seen, func(url string) []string {
-			fmt.Println(url)
-			urls, err := links.Extract(url)
-			if err != nil {
-				log.Print(err)
-			}
+			urls := filterByPrefixes(crawl(url), flag.Args())
 			return urls
 		})
 	}
+}
+
+func crawl(url string) []string {
+	fmt.Println(url)
+	urls, err := links.Extract(url)
+	if err != nil {
+		log.Println(err)
+	}
+	return urls
+}
+
+func filterByPrefixes(strs, prefixes []string) (out []string) {
+	for _, s := range strs {
+		for _, p := range prefixes {
+			if strings.HasPrefix(s, p) {
+				out = append(out, s)
+			}
+		}
+	}
+	return
 }
