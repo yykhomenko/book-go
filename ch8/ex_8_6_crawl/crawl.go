@@ -11,10 +11,12 @@ import (
 	"github.com/yykhomenko/book-gopl/ch5/links"
 )
 
-var depth = flag.Int("depth", math.MaxInt64, "search depth, empty is unbounded")
-var semaphore = make(chan struct{}, 20)
-var seen = make(map[string]bool)
-var seenMu = &sync.Mutex{}
+var (
+	depth     = flag.Int("depth", math.MaxInt64, "search depth, empty is unbounded")
+	semaphore = make(chan struct{}, 20)
+	seen      = make(map[string]bool)
+	seenMu    = &sync.Mutex{}
+)
 
 func main() {
 	flag.Parse()
