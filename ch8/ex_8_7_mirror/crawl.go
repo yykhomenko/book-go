@@ -27,15 +27,6 @@ func main() {
 	}
 }
 
-func crawl(url string) []string {
-	fmt.Println(url)
-	urls, err := links.Extract(url)
-	if err != nil {
-		log.Println(err)
-	}
-	return urls
-}
-
 func filterByPrefixes(strs, prefixes []string) (out []string) {
 	for _, s := range strs {
 		for _, p := range prefixes {
@@ -45,4 +36,13 @@ func filterByPrefixes(strs, prefixes []string) (out []string) {
 		}
 	}
 	return
+}
+
+func crawl(url string) []string {
+	fmt.Println(url)
+	urls, err := links.Extract(url)
+	if err != nil {
+		log.Println(err)
+	}
+	return urls
 }
