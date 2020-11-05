@@ -5,47 +5,46 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math"
+	"sync"
 
 	"github.com/yykhomenko/book-gopl/ch5/links"
 )
 
-var depth = flag.Int("depth", 0, "search depth, 0 is unbounded")
+var depth = flag.Int("depth", math.MaxInt64, "search depth, empty is unbounded")
+var semaphore = make(chan struct{}, 20)
+var seen = make(map[string]bool)
+var seenMu = &sync.Mutex{}
 
 func main() {
 	flag.Parse()
-
-	worklist := make(chan []string)
-	unseenLinks := make(chan string)
-
-	go func() { worklist <- flag.Args() }()
-
-	crawlTo(worklist, unseenLinks)
-	filterUnseen(unseenLinks, worklist)
-}
-
-func crawlTo(worklist chan<- []string, unseenLinks <-chan string) {
-	for i := 0; i < 20; i++ {
-		go func() {
-			for link := range unseenLinks {
-				fmt.Println(link)
-				foundLinks, err := links.Extract(link)
-				if err != nil {
-					log.Print(err)
-				}
-				go func() { worklist <- foundLinks }()
-			}
-		}()
+	wg := &sync.WaitGroup{}
+	for _, arg := range flag.Args() {
+		crawlDeep(arg, *depth, wg)
 	}
+	wg.Wait()
 }
 
-func filterUnseen(unseenLinks chan<- string, worklist <-chan []string) {
-	seen := make(map[string]bool)
-	for list := range worklist {
-		for _, link := range list {
-			if !seen[link] {
-				seen[link] = true
-				unseenLinks <- link
-			}
+func crawlDeep(url string, depth int, wg *sync.WaitGroup) {
+	defer wg.Done()
+	if depth == 0 {
+		return
+	}
+
+	fmt.Println(url)
+
+	semaphore <- struct{}{}
+	foundLinks, err := links.Extract(url)
+	<-semaphore
+	if err != nil {
+		log.Print(err)
+	}
+
+	for _, link := range foundLinks {
+		if !seen[link] {
+			seen[link] = true
+			wg.Add(1)
+			go crawlDeep(link, depth-1, wg)
 		}
 	}
 }
