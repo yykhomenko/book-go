@@ -1,3 +1,4 @@
+// go run crawl.go https://golang.org
 package main
 
 import (
