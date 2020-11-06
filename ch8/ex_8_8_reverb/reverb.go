@@ -32,18 +32,11 @@ func handleConn(c net.Conn) {
 		c.Close()
 	}()
 
+	lines := make(chan string)
+	go scan(c, lines)
+
 	const timeout = 10 * time.Second
 	timer := time.NewTimer(timeout)
-	lines := make(chan string)
-
-	go func() {
-		defer close(lines)
-		input := bufio.NewScanner(c)
-		for input.Scan() {
-			lines <- input.Text()
-		}
-	}()
-
 	for {
 		select {
 		case line := <-lines:
@@ -54,6 +47,19 @@ func handleConn(c net.Conn) {
 			return
 		}
 	}
+}
+
+func scan(c net.Conn, lines chan string) {
+	func() {
+		defer close(lines)
+		input := bufio.NewScanner(c)
+		for input.Scan() {
+			lines <- input.Text()
+		}
+		if input.Err() != nil {
+			log.Println(input.Err())
+		}
+	}()
 }
 
 func echo(c net.Conn, wg *sync.WaitGroup, shout string, delay time.Duration) {
