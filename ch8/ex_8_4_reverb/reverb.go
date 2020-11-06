@@ -26,13 +26,7 @@ func main() {
 }
 
 func handleConn(c net.Conn) {
-	defer func() {
-		if cw, ok := c.(*net.TCPConn); ok {
-			cw.CloseWrite()
-		} else {
-			c.Close()
-		}
-	}()
+	defer c.(*net.TCPConn).CloseWrite()
 
 	wg := &sync.WaitGroup{}
 	input := bufio.NewScanner(c)
