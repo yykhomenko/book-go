@@ -10,19 +10,21 @@ func main() {
 	fmt.Println("Begin countdown. Press <Enter> to abort.")
 
 	abort := make(chan struct{})
-	launch := time.Tick(10 * time.Second)
+	tick := time.Tick(1 * time.Second)
 
 	go func() {
 		os.Stdin.Read(make([]byte, 1))
 		abort <- struct{}{}
 	}()
 
-	select {
-	case <-abort:
-		fmt.Println("Launch aborted.")
-		return
-	case <-launch:
-		fmt.Println("Launch!!!")
-		// launch()
+	for countdown := 10; countdown > 0; countdown-- {
+		fmt.Println(countdown)
+		select {
+		case <-abort:
+			fmt.Println("Launch aborted.")
+			return
+		case <-tick:
+			// NOP
+		}
 	}
 }
