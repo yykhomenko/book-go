@@ -12,5 +12,5 @@ func main() {
 		fmt.Println(countdown)
 		<-tick
 	}
-	// lanch()
+	// launch()
 }

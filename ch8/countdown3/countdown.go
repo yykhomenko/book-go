@@ -23,6 +23,6 @@ func main() {
 		return
 	case <-launch:
 		fmt.Println("Launch!!!")
-		// lanch()
+		// launch()
 	}
 }
