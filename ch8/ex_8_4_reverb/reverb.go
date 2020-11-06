@@ -26,7 +26,13 @@ func main() {
 }
 
 func handleConn(c net.Conn) {
-	defer c.Close()
+	defer func() {
+		if cw, ok := c.(*net.TCPConn); ok {
+			cw.CloseWrite()
+		} else {
+			c.Close()
+		}
+	}()
 
 	wg := &sync.WaitGroup{}
 	input := bufio.NewScanner(c)
@@ -35,12 +41,6 @@ func handleConn(c net.Conn) {
 		go echo(c, wg, input.Text(), 1*time.Second)
 	}
 	wg.Wait()
-
-	if cw, ok := c.(*net.TCPConn); ok {
-		cw.CloseWrite()
-	} else {
-		c.Close()
-	}
 }
 
 func echo(c net.Conn, wg *sync.WaitGroup, shout string, delay time.Duration) {
