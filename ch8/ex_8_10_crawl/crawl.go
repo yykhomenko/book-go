@@ -47,7 +47,7 @@ func main() {
 
 func crawlDeep(url string, depth int, wg *sync.WaitGroup) {
 	defer wg.Done()
-	if canceled() || depth == 0 {
+	if depth == 0 {
 		return
 	}
 
@@ -70,14 +70,5 @@ func crawlDeep(url string, depth int, wg *sync.WaitGroup) {
 		seenMu.Unlock()
 		wg.Add(1)
 		go crawlDeep(link, depth-1, wg)
-	}
-}
-
-func canceled() bool {
-	select {
-	case <-done:
-		return true
-	default:
-		return false
 	}
 }
