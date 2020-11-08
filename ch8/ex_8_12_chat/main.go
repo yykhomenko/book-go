@@ -1,3 +1,6 @@
+// Chat with all users printing.
+// go run main.go
+// telnet localhost 8000
 package main
 
 import (
