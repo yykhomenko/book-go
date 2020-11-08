@@ -76,6 +76,7 @@ func handleConn(conn net.Conn) {
 		time.Sleep(100 * time.Millisecond)
 		conn.Close()
 	})
+	defer timer.Stop()
 
 	input := bufio.NewScanner(conn)
 	for input.Scan() {
