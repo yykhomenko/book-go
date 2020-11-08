@@ -1,6 +1,7 @@
 package links
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -9,6 +10,51 @@ import (
 
 func Extract(url string) (links []string, err error) {
 	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("get %s: %s", url, resp.Status)
+	}
+
+	doc, err := html.Parse(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("analyze %s as HTML: %v", url, err)
+	}
+
+	visitNode := func(n *html.Node) {
+		if n.Type == html.ElementNode && n.Data == "a" {
+			for _, a := range n.Attr {
+				if a.Key == "href" {
+					link, err := resp.Request.URL.Parse(a.Val)
+					if err != nil {
+						continue
+					}
+					links = append(links, link.String())
+				}
+			}
+		}
+	}
+
+	forEachNode(doc, visitNode, nil)
+
+	return links, nil
+}
+
+func ExtractWithCancel(url string, done <-chan struct{}) (links []string, err error) {
+	ctx, cancel := context.WithCancel(context.Background())
+	req, err := http.NewRequest("GET", url, nil)
+	go func() {
+		select {
+		case <-ctx.Done():
+		case <-done:
+			cancel()
+		}
+	}()
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
