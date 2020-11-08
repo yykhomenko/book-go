@@ -18,7 +18,7 @@ var (
 	semaphore = make(chan struct{}, 20)
 	seen      = make(map[string]bool)
 	seenMu    = &sync.Mutex{}
-	done      = make(chan struct{})
+	cancel    = make(chan struct{})
 )
 
 func main() {
@@ -32,16 +32,16 @@ func main() {
 
 	go func() {
 		wg.Wait()
-		done <- struct{}{}
+		cancel <- struct{}{}
 	}()
 
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
 	select {
-	case <-done:
+	case <-cancel:
 		return
 	case <-interrupt:
-		close(done)
+		close(cancel)
 	}
 }
 
@@ -54,7 +54,7 @@ func crawlDeep(url string, depth int, wg *sync.WaitGroup) {
 	fmt.Println(url)
 
 	semaphore <- struct{}{}
-	foundLinks, err := links.ExtractWithCancel(url, done)
+	foundLinks, err := links.ExtractWithCancel(url, cancel)
 	<-semaphore
 	if err != nil {
 		log.Print(err)

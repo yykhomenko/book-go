@@ -1,7 +1,6 @@
 package links
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 
@@ -43,17 +42,12 @@ func Extract(url string) (links []string, err error) {
 	return links, nil
 }
 
-func ExtractWithCancel(url string, done <-chan struct{}) (links []string, err error) {
-	ctx, cancel := context.WithCancel(context.Background())
+func ExtractWithCancel(url string, cancel <-chan struct{}) (links []string, err error) {
 	req, err := http.NewRequest("GET", url, nil)
-	go func() {
-		select {
-		case <-ctx.Done():
-		case <-done:
-			cancel()
-		}
-	}()
-
+	if err != nil {
+		return nil, err
+	}
+	req.Cancel = cancel
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
