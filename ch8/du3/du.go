@@ -80,6 +80,6 @@ func dirents(dir string) []os.FileInfo {
 	return entries
 }
 
-func printDiskUsage(nfiles int64, nbytes int64) (int, error) {
-	return fmt.Printf("%d files %.1f GB\n", nfiles, float64(nbytes)/1e9)
+func printDiskUsage(nfiles int64, nbytes int64) {
+	fmt.Printf("%d files %.1f GB\n", nfiles, float64(nbytes)/1e9)
 }
