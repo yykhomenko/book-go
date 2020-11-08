@@ -8,20 +8,20 @@ import (
 )
 
 func main() {
-	result := make(chan []byte)
+	results := make(chan []byte)
 	cancel := make(chan struct{})
 	for _, url := range os.Args[1:] {
-		go fetch(url, result, cancel)
+		go fetch(url, results, cancel)
 	}
 
 	select {
-	case b := <-result:
+	case b := <-results:
 		close(cancel)
 		os.Stdout.Write(b)
 	}
 }
 
-func fetch(url string, result chan<- []byte, cancel <-chan struct{}) {
+func fetch(url string, results chan<- []byte, cancel <-chan struct{}) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -46,5 +46,5 @@ func fetch(url string, result chan<- []byte, cancel <-chan struct{}) {
 		fmt.Fprintln(os.Stderr, err)
 		return
 	}
-	result <- b
+	results <- b
 }
