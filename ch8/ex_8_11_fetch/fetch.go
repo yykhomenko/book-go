@@ -21,7 +21,7 @@ func main() {
 	}
 }
 
-func fetch(url string, result chan []byte, cancel <-chan struct{}) {
+func fetch(url string, result chan<- []byte, cancel <-chan struct{}) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
