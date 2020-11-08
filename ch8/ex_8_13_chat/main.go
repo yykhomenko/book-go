@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+const timeout = 5 * time.Minute
+
 func main() {
 	listener, err := net.Listen("tcp", "localhost:8000")
 	if err != nil {
@@ -69,11 +71,16 @@ func handleConn(conn net.Conn) {
 	messages <- who + " connected"
 	entering <- client{who, ch}
 
-	go clientTimeout(conn, ch)
+	var timer = time.AfterFunc(timeout, func() {
+		ch <- "timeout"
+		time.Sleep(100 * time.Millisecond)
+		conn.Close()
+	})
 
 	input := bufio.NewScanner(conn)
 	for input.Scan() {
 		messages <- who + ": " + input.Text()
+		timer.Reset(timeout)
 	} // ignore input.Err()
 
 	leaving <- client{who, ch}
@@ -85,14 +92,4 @@ func clientWriter(conn net.Conn, ch <-chan string) {
 	for msg := range ch {
 		fmt.Fprintln(conn, msg)
 	}
-}
-
-func clientTimeout(conn net.Conn, ch chan<- string) {
-	var timer *time.Timer
-	timer = time.AfterFunc(5*time.Minute, func() {
-		ch <- "timeout"
-		time.Sleep(100 * time.Millisecond)
-		conn.Close()
-		timer.Stop()
-	})
 }
