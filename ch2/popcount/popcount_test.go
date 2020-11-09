@@ -12,8 +12,10 @@ func TestPopCount(t *testing.T) {
 	assert.Equal(t, 4, PopCount(15))
 }
 
+var result int
+
 func BenchmarkPopCount(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		PopCount(uint64(i))
+		result = PopCount(uint64(i))
 	}
 }
