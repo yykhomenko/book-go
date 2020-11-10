@@ -1,9 +1,5 @@
 package memo
 
-import (
-	"fmt"
-)
-
 // Func is the type of the function to memoize.
 type Func func(key string, done <-chan struct{}) (interface{}, error)
 
@@ -29,7 +25,7 @@ type Memo struct {
 	requests, cancels chan request
 }
 
-// New returns a memoization of f.  Clients must subsequently call Close.
+// New returns a memoization of f. Clients must subsequently call Close.
 func New(f Func) *Memo {
 	memo := &Memo{make(chan request), make(chan request)}
 	go memo.server(f)
@@ -59,7 +55,6 @@ Loop:
 		for {
 			select {
 			case req := <-memo.cancels:
-				fmt.Println("server: deleting cancelled entry (early)")
 				delete(cache, req.key)
 			default:
 				break Cancel
@@ -67,11 +62,9 @@ Loop:
 		}
 		select {
 		case req := <-memo.cancels:
-			fmt.Println("server: deleting cancelled entry")
 			delete(cache, req.key)
 			continue Loop
 		case req := <-memo.requests:
-			fmt.Println("server: request")
 			e := cache[req.key]
 			if e == nil {
 				e = &entry{ready: make(chan struct{})}
@@ -85,7 +78,6 @@ Loop:
 
 func (e *entry) call(f Func, key string, done <-chan struct{}) {
 	e.res.value, e.res.err = f(key, done)
-	fmt.Println("call: returned from f")
 	close(e.ready)
 }
 
