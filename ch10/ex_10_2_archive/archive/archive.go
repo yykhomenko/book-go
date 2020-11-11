@@ -4,11 +4,11 @@ import (
 	"bufio"
 	"errors"
 	"io"
+	"os"
 	"sync"
 	"sync/atomic"
 )
 
-// ErrFormat indicates that decoding encountered an unknown format.
 var ErrFormat = errors.New("archive: unknown format")
 
 // A format holds an image format's name, magic header and how to decode it.
@@ -18,39 +18,24 @@ type format struct {
 	reader      ArchReader
 }
 
-type ArchReader func(r io.Reader) (io.Reader, error)
+type ArchReader func(f *os.File) (io.Reader, error)
 
-// Formats is the list of registered formats.
 var (
 	formatsMu     sync.Mutex
 	atomicFormats atomic.Value
 )
 
-// RegisterFormat registers an archive format for use by Reader.
+// RegisterFormat registers an archive format for use by NewReader.
 // Name is the name of the format, like "tar" or "zip".
 // Magic is the magic prefix that identifies the format's encoding. The magic
 // string can contain "?" wildcards that each match any one byte.
-// Reader is the function that decodes the encoded archive.
+// NewReader is the function that decodes the encoded archive.
 // DecodeConfig is the function that decodes just its configuration.
-func RegisterFormat(name, magic string, magicOffset int, decode func(io.Reader) (io.Reader, error)) {
+func RegisterFormat(name, magic string, magicOffset int, decode func(*os.File) (io.Reader, error)) {
 	formatsMu.Lock()
 	formats, _ := atomicFormats.Load().([]format)
 	atomicFormats.Store(append(formats, format{name, magic, magicOffset, decode}))
 	formatsMu.Unlock()
-}
-
-// A reader is an io.Reader that can also peek ahead.
-type reader interface {
-	io.Reader
-	Peek(int) ([]byte, error)
-}
-
-// asReader converts an io.Reader to a reader.
-func asReader(r io.Reader) reader {
-	if rr, ok := r.(reader); ok {
-		return rr
-	}
-	return bufio.NewReader(r)
 }
 
 // Match reports whether magic matches b. Magic may contain "?" wildcards.
@@ -67,27 +52,25 @@ func match(magic string, b []byte) bool {
 }
 
 // Sniff determines the format of r's data.
-func sniff(r reader) format {
+func sniff(file *os.File) format {
+	defer file.Seek(0, io.SeekStart)
 	formats, _ := atomicFormats.Load().([]format)
+	r := bufio.NewReader(file)
 	for _, f := range formats {
 		b, err := r.Peek(f.magicOffset + len(f.magic))
 		if err == nil && match(f.magic, b[f.magicOffset:]) {
 			return f
 		}
 	}
+
 	return format{}
 }
 
-// Reader read an archive that has been archived in a registered format.
-// The string returned is the format name used during format registration.
-// Format registration is typically done by an init function in the codec-
-// specific package.
-func Reader(r io.Reader) (io.Reader, string, error) {
-	rr := asReader(r)
-	f := sniff(rr)
-	if f.reader == nil {
+func NewReader(file *os.File) (io.Reader, string, error) {
+	format := sniff(file)
+	if format.reader == nil {
 		return nil, "", ErrFormat
 	}
-	m, err := f.reader(rr)
-	return m, f.name, err
+	r, err := format.reader(file)
+	return r, format.name, err
 }
