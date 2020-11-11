@@ -26,16 +26,16 @@ var (
 	atomicFormats atomic.Value
 )
 
-// RegisterFormat registers an archive format for use by Decode.
+// RegisterFormat registers an archive format for use by Reader.
 // Name is the name of the format, like "tar" or "zip".
 // Magic is the magic prefix that identifies the format's encoding. The magic
 // string can contain "?" wildcards that each match any one byte.
-// Decode is the function that decodes the encoded archive.
+// Reader is the function that decodes the encoded archive.
 // DecodeConfig is the function that decodes just its configuration.
-func RegisterFormat(name, magic string, decode func(io.Reader) (io.Reader, error)) {
+func RegisterFormat(name, magic string, magicOffset int, decode func(io.Reader) (io.Reader, error)) {
 	formatsMu.Lock()
 	formats, _ := atomicFormats.Load().([]format)
-	atomicFormats.Store(append(formats, format{name, magic, 0, decode}))
+	atomicFormats.Store(append(formats, format{name, magic, magicOffset, decode}))
 	formatsMu.Unlock()
 }
 
@@ -70,19 +70,19 @@ func match(magic string, b []byte) bool {
 func sniff(r reader) format {
 	formats, _ := atomicFormats.Load().([]format)
 	for _, f := range formats {
-		b, err := r.Peek(len(f.magic))
-		if err == nil && match(f.magic, b) {
+		b, err := r.Peek(f.magicOffset + len(f.magic))
+		if err == nil && match(f.magic, b[f.magicOffset:]) {
 			return f
 		}
 	}
 	return format{}
 }
 
-// Decode decodes an image that has been encoded in a registered format.
+// Reader read an archive that has been archived in a registered format.
 // The string returned is the format name used during format registration.
 // Format registration is typically done by an init function in the codec-
 // specific package.
-func Decode(r io.Reader) (io.Reader, string, error) {
+func Reader(r io.Reader) (io.Reader, string, error) {
 	rr := asReader(r)
 	f := sniff(rr)
 	if f.reader == nil {
