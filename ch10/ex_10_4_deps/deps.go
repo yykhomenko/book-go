@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	p := parents(packages(os.Args[1:]))
+	p := ancestors(packages(os.Args[1:]))
 	fmt.Println(strings.Join(p, "\n"))
 }
 
@@ -28,7 +28,7 @@ func packages(names []string) []string {
 	return strings.Split(string(out), " ")
 }
 
-func parents(names []string) (pkgs []string) {
+func ancestors(names []string) (pkgs []string) {
 	seen := make(map[string]bool)
 	args := []string{"list", `-f={{join .Imports " "}} {{join .Deps " "}}`}
 	for _, name := range names {
