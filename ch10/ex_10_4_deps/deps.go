@@ -5,17 +5,14 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
 	"sort"
 	"strings"
 )
 
 func main() {
-
-	in := []string{"/Users/yykhomenko/app/src/github.com/yykhomenko/book-gopl/ch10/ex_10_4_deps"}
-	// in := []string{"runtime/internal/atomic"}
-	p := parents(packages(in))
-	// p := parents(packages(os.Args[1:]))
+	p := parents(packages(os.Args[1:]))
 	fmt.Println(strings.Join(p, "\n"))
 }
 
