@@ -11,13 +11,14 @@ import (
 
 func main() {
 	in := bufio.NewReader(os.Stdin)
-	printResults(charCount(in))
+	printResults(CharCount(in))
 }
 
-func charCount(in *bufio.Reader) (counts map[rune]int, utfLen [5]int, invalid int) {
+func CharCount(in io.Reader) (counts map[rune]int, utfLen [5]int, invalid int) {
+	input := bufio.NewReader(in)
 	counts = make(map[rune]int)
 	for {
-		r, n, err := in.ReadRune()
+		r, n, err := input.ReadRune()
 		if err == io.EOF {
 			return
 		}
