@@ -70,7 +70,7 @@ func randomPalindrome(rnd *rand.Rand) string {
 }
 
 func randomNonPalindrome(rnd *rand.Rand) string {
-	n := rnd.Intn(22) + 3
+	n := rnd.Intn(22) + 2
 	runes := make([]rune, n)
 	for i := 0; i < n; {
 		r := rune(rnd.Intn(0x1000))
@@ -79,5 +79,11 @@ func randomNonPalindrome(rnd *rand.Rand) string {
 			i++
 		}
 	}
+
+	if unicode.ToLower(runes[0]) ==
+		unicode.ToLower(runes[len(runes)-1]) {
+		return randomNonPalindrome(rnd)
+	}
+
 	return string(runes)
 }
