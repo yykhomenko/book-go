@@ -1,6 +1,7 @@
 package word
 
 import (
+	"fmt"
 	"math/rand"
 	"testing"
 	"time"
@@ -52,6 +53,7 @@ func TestRandomNonPalindromes(t *testing.T) {
 	rng := rand.New(rand.NewSource(seed))
 	for i := 0; i < 1000; i++ {
 		p := randomNonPalindrome(rng)
+		fmt.Println(p)
 		if IsPalindrome(p) {
 			t.Errorf("IsPalindrome(%q) = true", p)
 		}
@@ -75,12 +77,9 @@ func randomNonPalindrome(rnd *rand.Rand) string {
 	for i := 0; i < n; {
 		r := rune(rnd.Intn(127-32) + 32)
 
-		if unicode.IsLetter(r) {
-			runes[i] = r
-			i++
-		}
-
-		if unicode.IsPunct(r) {
+		if unicode.IsLetter(r) ||
+			unicode.IsPunct(r) ||
+			unicode.IsSpace(r) {
 			runes[i] = r
 			i++
 		}
