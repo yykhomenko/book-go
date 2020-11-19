@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"testing"
 	"time"
+	"unicode"
 )
 
 func TestIsPalindrome(t *testing.T) {
@@ -69,11 +70,14 @@ func randomPalindrome(rnd *rand.Rand) string {
 }
 
 func randomNonPalindrome(rnd *rand.Rand) string {
-	n := rnd.Intn(23) + 10
+	n := rnd.Intn(22) + 3
 	runes := make([]rune, n)
-	for i := 0; i < n; i++ {
+	for i := 0; i < n; {
 		r := rune(rnd.Intn(0x1000))
-		runes[i] = r
+		if unicode.IsLetter(r) {
+			runes[i] = r
+			i++
+		}
 	}
 	return string(runes)
 }
