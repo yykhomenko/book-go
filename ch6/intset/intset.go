@@ -54,7 +54,9 @@ func (s *IntSet) AddAll(vs ...int) {
 // ex 6.1
 func (s *IntSet) Remove(x int) {
 	word, bit := x/N, uint(x%N)
-	s.words[word] &^= 1 << bit
+	if word < len(s.words) {
+		s.words[word] &^= 1 << bit
+	}
 }
 
 // ex 6.1
