@@ -48,6 +48,8 @@ func encode(buf *bytes.Buffer, v reflect.Value) error {
 	case reflect.Uint, reflect.Uint8,
 		reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
 		buf.WriteString(strconv.FormatInt(v.Int(), 10))
+	case reflect.Float32, reflect.Float64:
+		buf.WriteString(strconv.FormatFloat(v.Float(), 'f', -1, 64))
 	default:
 		return fmt.Errorf("unsupported type: %q", v.Kind())
 	}
