@@ -62,7 +62,10 @@ func encodePretty(buf *bytes.Buffer, v reflect.Value, level int) error {
 	case reflect.Struct:
 		buf.WriteByte('(')
 		for i := 0; i < v.NumField(); i++ {
-			if i != 0 {
+			if v.Field(i).IsZero() {
+				continue
+			}
+			if i > 0 {
 				fmt.Fprintf(buf, "\n%*s", level+1, "")
 			}
 			fmt.Fprintf(buf, "(%s ", v.Type().Field(i).Name)
@@ -84,7 +87,7 @@ func encodePretty(buf *bytes.Buffer, v reflect.Value, level int) error {
 	case reflect.Map:
 		buf.WriteByte('(')
 		for i, key := range v.MapKeys() {
-			if i != 0 {
+			if i > 0 {
 				fmt.Fprintf(buf, "\n%*s", level+1, "")
 			}
 			buf.WriteByte('(')
@@ -98,7 +101,7 @@ func encodePretty(buf *bytes.Buffer, v reflect.Value, level int) error {
 			buf.WriteByte(')')
 		}
 		buf.WriteByte(')')
-	default: // chan, func
+	default:
 		return fmt.Errorf("unsupported type: %s", v.Type())
 	}
 	return nil
