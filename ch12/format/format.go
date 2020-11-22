@@ -1,6 +1,7 @@
 package format
 
 import (
+	"bytes"
 	"reflect"
 	"strconv"
 )
@@ -20,7 +21,9 @@ func FormatAtom(v reflect.Value) string {
 	case reflect.Uint, reflect.Uint8, reflect.Uint16,
 		reflect.Uint32, reflect.Uint64, reflect.Uintptr:
 		return strconv.FormatUint(v.Uint(), 10)
-		// float and complex don't show for simplicity.
+		// ex12.1
+	case reflect.Float64:
+		return strconv.FormatFloat(v.Float(), 'g', -1, 64)
 	case reflect.Bool:
 		return strconv.FormatBool(v.Bool())
 	case reflect.String:
@@ -29,7 +32,19 @@ func FormatAtom(v reflect.Value) string {
 		reflect.Slice, reflect.Map:
 		return v.Type().String() + " 0x" +
 			strconv.FormatUint(uint64(v.Pointer()), 16)
-	default: // reflect.Array, reflect.Struct, reflect.Interface
+		// ex12.1
+	case reflect.Struct:
+		var buf bytes.Buffer
+		buf.WriteRune('{')
+		for i := 0; i < v.NumField(); i++ {
+			if i != 0 {
+				buf.WriteByte(' ')
+			}
+			buf.WriteString(FormatAtom(v.Field(i)))
+		}
+		buf.WriteByte('}')
+		return buf.String()
+	default: // reflect.Array, reflect.Interface
 		return v.Type().String() + " value"
 	}
 }
