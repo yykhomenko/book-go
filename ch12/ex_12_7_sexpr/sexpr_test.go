@@ -1,7 +1,6 @@
 package sexpr
 
 import (
-	"encoding/json"
 	"strings"
 	"testing"
 
@@ -38,7 +37,7 @@ func TestMarshal(t *testing.T) {
          (Y 2))))`
 
 	actual := &testStruct{}
-	d := json.NewDecoder(strings.NewReader(input))
+	d := NewDecoder(strings.NewReader(input))
 	if err := d.Decode(actual); err != nil {
 		t.Error(err)
 	}
