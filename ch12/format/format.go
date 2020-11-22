@@ -35,7 +35,7 @@ func FormatAtom(v reflect.Value) string {
 		// ex12.1
 	case reflect.Struct:
 		var buf bytes.Buffer
-		buf.WriteRune('{')
+		buf.WriteByte('{')
 		for i := 0; i < v.NumField(); i++ {
 			if i != 0 {
 				buf.WriteByte(' ')
