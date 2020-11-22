@@ -13,7 +13,7 @@ func TestMarshal(t *testing.T) {
 	}{
 		{struct{}{}, "{}"},
 		{[]struct{}{}, "[]"},
-		{[]struct{ a int }{{1}, {2}}, `[{"a":1},{"a":2}]`},
+		{[]struct{ a int }{{-1}, {2}}, `[{"a":-1},{"a":2}]`},
 	}
 	for _, test := range tests {
 		got, err := Marshal(test.v)
