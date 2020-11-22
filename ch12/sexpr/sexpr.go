@@ -4,13 +4,27 @@ import (
 	"bytes"
 	"fmt"
 	"reflect"
-	"strconv"
 )
+
+// Marshal encode Go value to S-expression.
+func Marshal(v interface{}) ([]byte, error) {
+	var buf bytes.Buffer
+	if err := encode(&buf, reflect.ValueOf(v)); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
 
 func encode(buf *bytes.Buffer, v reflect.Value) error {
 	switch v.Kind() {
 	case reflect.Invalid:
 		buf.WriteString("nil")
+	case reflect.Bool:
+		if v.Bool() {
+			buf.WriteString("true")
+		} else {
+			buf.WriteString("false")
+		}
 	case reflect.Int, reflect.Int8, reflect.Int16,
 		reflect.Int32, reflect.Int64:
 		fmt.Printf("%d", v.Int())
@@ -40,21 +54,35 @@ func encode(buf *bytes.Buffer, v reflect.Value) error {
 			if i != 0 {
 				buf.WriteByte(' ')
 			}
-			buf.WriteString(FormatAtom(v.Field(i)))
+			fmt.Fprintf(buf, "(%s ", v.Type().Field(i).Name)
+			if err := encode(buf, v.Field(i)); err != nil {
+				return err
+			}
+			buf.WriteByte(')')
 		}
 		buf.WriteByte(')')
 
-	case reflect.Bool:
-		return strconv.FormatBool(v.Bool())
-	case reflect.Chan, reflect.Func,
-		reflect.Map:
-		return v.Type().String() + " 0x" +
-			strconv.FormatUint(uint64(v.Pointer()), 16)
-		// ex12.1
+	case reflect.Map:
+		buf.WriteByte('(')
+		for i, key := range v.MapKeys() {
+			if i != 0 {
+				buf.WriteByte(' ')
+			}
+			buf.WriteByte('(')
+			if err := encode(buf, key); err != nil {
+				return err
+			}
+			buf.WriteByte(' ')
+			if err := encode(buf, v.MapIndex(key)); err != nil {
+				return err
+			}
+			buf.WriteByte(')')
+		}
+		buf.WriteByte(')')
 
-		// ex12.1
-
-	default:
-		return v.Type().String() + " value"
+	default: // float, complex, bool, chan, func, interface
+		return fmt.Errorf("unsupported type: %s", v.Type())
 	}
+
+	return nil
 }
