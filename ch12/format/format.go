@@ -44,7 +44,19 @@ func FormatAtom(v reflect.Value) string {
 		}
 		buf.WriteByte('}')
 		return buf.String()
-	default: // reflect.Array, reflect.Interface
+		// ex12.1
+	case reflect.Array:
+		var buf bytes.Buffer
+		buf.WriteByte('[')
+		for i := 0; i < v.Len(); i++ {
+			if i != 0 {
+				buf.WriteByte(' ')
+			}
+			buf.WriteString(FormatAtom(v.Index(i)))
+		}
+		buf.WriteByte(']')
+		return buf.String()
+	default:
 		return v.Type().String() + " value"
 	}
 }
