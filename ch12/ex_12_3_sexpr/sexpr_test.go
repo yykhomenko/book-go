@@ -1,8 +1,9 @@
 package sexpr
 
 import (
-	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMarshal(t *testing.T) {
@@ -10,7 +11,7 @@ func TestMarshal(t *testing.T) {
 		b bool
 		f float64
 		c complex128
-		s []int
+		i interface{}
 	}{
 		true,
 		1.25,
@@ -18,9 +19,11 @@ func TestMarshal(t *testing.T) {
 		[]int{1, 2, 3},
 	}
 
+	expected := `((b t) (f 1.25) (c #C(1 2.5)) (i ("[]int" (1 2 3))))`
+
 	b, err := Marshal(test)
 	if err != nil {
 		t.Error(err)
 	}
-	fmt.Println(string(b))
+	assert.Equal(t, expected, string(b))
 }
