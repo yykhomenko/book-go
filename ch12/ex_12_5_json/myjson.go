@@ -58,6 +58,12 @@ func encode(buf *bytes.Buffer, v reflect.Value) error {
 			}
 		}
 		buf.WriteByte('}')
+	case reflect.Bool:
+		if v.Bool() {
+			buf.WriteString("true")
+		} else {
+			buf.WriteString("false")
+		}
 	case reflect.Int, reflect.Int8,
 		reflect.Int16, reflect.Int32, reflect.Int64:
 		buf.WriteString(strconv.FormatInt(v.Int(), 10))
