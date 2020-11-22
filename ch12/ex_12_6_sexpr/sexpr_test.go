@@ -20,20 +20,17 @@ func TestMarshal(t *testing.T) {
 	}{
 		true,
 		0.0,
-		1 + 2.5i,
+		0 + 0.0i,
 		[]int{1, 2, 3},
 		make(map[string]string),
 		geometry.Point{1, 2},
 	}
 
 	test.m["a"] = "b"
-	test.m["c"] = "d"
 
 	expected := `((b t)
- (c #C(1 2.5))
  (i ("[]int" (1 2 3)))
- (m (("a" "b")
-     ("c" "d")))
+ (m (("a" "b")))
  (point ((X 1)
          (Y 2))))`
 
