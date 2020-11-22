@@ -13,6 +13,7 @@ func TestMarshal(t *testing.T) {
 	}{
 		{struct{}{}},
 		{[]struct{}{}},
+		{true},
 		{map[string]float64{"1": 1.2}},
 		{map[int]int{1: 1}},
 	}
