@@ -1,6 +1,7 @@
 package format
 
 import (
+	"fmt"
 	"testing"
 	"time"
 )
@@ -18,4 +19,9 @@ func TestAny(t *testing.T) {
 			t.Errorf("Any() = %v, want %v", got, tt.want)
 		}
 	}
+}
+
+func ExampleAny() {
+	fmt.Println(Any([]int64{1}))
+	fmt.Println(Any([]time.Duration{1}))
 }
