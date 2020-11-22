@@ -58,6 +58,8 @@ func encode(buf *bytes.Buffer, v reflect.Value) error {
 			}
 		}
 		buf.WriteByte('}')
+	case reflect.Invalid:
+		buf.WriteString("nil")
 	case reflect.Bool:
 		if v.Bool() {
 			buf.WriteString("true")
