@@ -22,11 +22,9 @@ func TestMarshal(t *testing.T) {
 		0.0,
 		0 + 0.0i,
 		[]int{1, 2, 3},
-		make(map[string]string),
+		map[string]string{"a": "b"},
 		geometry.Point{1, 2},
 	}
-
-	test.m["a"] = "b"
 
 	expected := `((b t)
  (i ("[]int" (1 2 3)))
