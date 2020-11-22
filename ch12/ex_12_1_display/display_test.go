@@ -12,3 +12,9 @@ func TestDisplayMapStruct(t *testing.T) {
 	v[geometry.Point{1, 2}] = color.RGBA{255, 128, 255, 255}
 	Display("map", v)
 }
+
+func TestDisplayMapArray(t *testing.T) {
+	v := make(map[[2]int]color.Color)
+	v[[...]int{1, 2}] = color.RGBA{255, 128, 255, 255}
+	Display("map", v)
+}
