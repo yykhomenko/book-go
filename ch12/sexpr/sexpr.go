@@ -27,12 +27,12 @@ func encode(buf *bytes.Buffer, v reflect.Value) error {
 		}
 	case reflect.Int, reflect.Int8, reflect.Int16,
 		reflect.Int32, reflect.Int64:
-		fmt.Printf("%d", v.Int())
+		fmt.Fprintf(buf, "%d", v.Int())
 	case reflect.Uint, reflect.Uint8, reflect.Uint16,
 		reflect.Uint32, reflect.Uint64, reflect.Uintptr:
-		fmt.Printf("%d", v.Uint())
+		fmt.Fprintf(buf, "%d", v.Uint())
 	case reflect.String:
-		fmt.Printf("%q", v.String())
+		fmt.Fprintf(buf, "%q", v.String())
 	case reflect.Ptr:
 		return encode(buf, v.Elem())
 
