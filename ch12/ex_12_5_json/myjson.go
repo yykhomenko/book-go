@@ -49,7 +49,9 @@ func encode(buf *bytes.Buffer, v reflect.Value) error {
 				buf.WriteByte(',')
 			}
 			buf.WriteByte('"')
-			buf.WriteString(key.String())
+			if err := encode(buf, key); err != nil {
+				return err
+			}
 			buf.WriteString(`":`)
 			if err := encode(buf, v.MapIndex(key)); err != nil {
 				return err

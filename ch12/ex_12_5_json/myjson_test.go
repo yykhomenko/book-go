@@ -16,7 +16,8 @@ func TestMarshal(t *testing.T) {
 		// {[]struct{ a int }{{-1}, {2}}},
 		// {[]struct{ a, b float64 }{{-1.15, 2.5}}},
 		// {struct{ a, b float64 }{-1.15, 2.5}},
-		{map[string]float64{"1": 1.2}},
+		// {map[string]float64{"1": 1.2}},
+		{map[int]int{1: 1}},
 	}
 	for _, test := range tests {
 		expected, err := json.Marshal(test.v)
