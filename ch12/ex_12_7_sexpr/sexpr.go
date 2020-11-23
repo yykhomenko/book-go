@@ -7,7 +7,7 @@ type Decoder struct {
 }
 
 func (d Decoder) Decode(v interface{}) interface{} {
-
+	return nil
 }
 
 func NewDecoder(r io.Reader) *Decoder {
