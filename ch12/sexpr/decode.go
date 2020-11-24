@@ -59,3 +59,13 @@ func readList(lex *lexer, v reflect.Value) {
 		}
 	}
 }
+
+func endList(lex *lexer) bool {
+	switch lex.token {
+	case scanner.EOF:
+		panic("end of file")
+	case ')':
+		return true
+	}
+	return false
+}
