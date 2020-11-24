@@ -1,11 +1,28 @@
 package sexpr
 
 import (
+	"bytes"
 	"fmt"
 	"reflect"
 	"strconv"
 	"text/scanner"
 )
+
+func Unmarshal(data []byte, out interface{}) (err error) {
+	lex := &lexer{scan: scanner.Scanner{Mode: scanner.GoTokens}}
+	lex.scan.Init(bytes.NewReader(data))
+	lex.next()
+
+	defer func() {
+		if x := recover(); x != nil {
+			err = fmt.Errorf("error in %s: %v", lex.scan.Position, x)
+		}
+	}()
+
+	read(lex, reflect.ValueOf(out).Elem())
+
+	return nil
+}
 
 func read(lex *lexer, v reflect.Value) {
 	switch lex.token {
@@ -37,7 +54,7 @@ func read(lex *lexer, v reflect.Value) {
 func readList(lex *lexer, v reflect.Value) {
 	switch v.Kind() {
 	case reflect.Array:
-		for i := 0; !endlist(lex); i++ {
+		for i := 0; !endList(lex); i++ {
 			read(lex, v.Index(i))
 		}
 	case reflect.Slice:
